@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  taskredis:
+    image: redis
+    container_name: task-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server"]
+  taskdb:
+    image: mysql
+    container_name: task-db
+    ports:
+      - "3306:3306"
+    command: ["mysqld"]
+  taskmaster:
+    image: taskflow
+    container_name: task-master
+    environment:
+      - DOCKER_HOST=${HOSTNAME}
+    networks:
+      - master_public
+      - master_private
+    volumes:
+      - .:/taskflow
+      - ./supervisord_master.conf:/etc/supervisord.conf
+    command: ["/usr/bin/supervisord"]
+    depends_on:
+      - taskredis
+      - taskdb
+  taskworker:
+    image: taskflow
+    container_name: task-worker
+    environment:
+      - DOCKER_HOST=${HOSTNAME}
+    volumes:
+      - .:/taskflow
+      - ./supervisord_worker.conf:/etc/supervisord.conf
+    command: ["/usr/bin/supervisord"]
+    depends_on:
+      - taskredis
+      - taskdb

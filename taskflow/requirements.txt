@@ -1,0 +1,6 @@
+supervisor
+tornado
+GitPython
+requests
+PyMySQL
+redis
