@@ -11,7 +11,7 @@
 
 工具解决问题：
 
-​	在日常运维中，经常会有这样的需求，制作一个通用的流程完成将人工操作改造成自动化流程步骤。
+	在日常运维中，经常会有这样的需求，制作一个通用的流程完成将人工操作改造成自动化流程步骤。
 
 举个例子：
 
@@ -27,7 +27,7 @@
 
 模块接入：
 
-​	为了敏捷和通用性，可以根据自己的需求快速的定制自己的模块,
+	为了敏捷和通用性，可以根据自己的需求快速的定制自己的模块,
 模块的规范特别简单,
 只需要在modules 文件夹中创建自己的模块脚本。
 
@@ -52,9 +52,9 @@
 
 运行流程图：
 
-![alt "流程图"](schema.png)
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/schema.png)
 
 
 运行模块的关键程序instance表数据更新逻辑:
 
-![alt "流程图"](task_run_flow.png)
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/task_run_flow.png)
