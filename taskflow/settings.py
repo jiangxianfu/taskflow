@@ -21,5 +21,6 @@ MYSQL_PWD = ""
 TASK_RUN_FILE = os.path.join(BASE_DIR, 'task_run.py')
 TASK_RUN_LOG_FORMAT = "/var/log/taskflow/task_run_%s.log"
 
-#PYTHONBIN = "/usr/bin/python3"
+# PYTHONBIN = "/usr/bin/python3"
+
 PYTHONBIN = "python3"

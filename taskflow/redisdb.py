@@ -4,7 +4,8 @@ import redis
 import settings
 import json
 
-class RedisDB(object):
+
+class RedisDB:
     def __init__(self):
         self.conn = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -20,4 +21,4 @@ class RedisDB(object):
         return self.conn.rpop("taskflow:messagequeues")
 
     def set_running_instance(self, key, value):
-        self.conn.set(key, json.dumps(value), ex=1*24*60*60)
+        self.conn.set(key, json.dumps(value), ex=1 * 24 * 60 * 60)

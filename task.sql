@@ -3,7 +3,7 @@ CREATE TABLE `modules` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `name` varchar(128) NOT NULL COMMENT '模块名称即对应的脚本文件名称(去除后缀)',
    `description` varchar(255) NOT NULL COMMENT '描述信息',
-   `arguments` json NOT NULL COMMENT '参数定义[{"name":"id","type":"int","description":"ip信息"},"name":"sm","type":"object","description":"对象类型"}] 目前参数只支持 int str ,其他的都算object',
+   `arguments` json NOT NULL COMMENT '参数定义[{"name":"id","type":"simple","description":"ip信息"},"name":"sm","type":"object","description":"对象类型"}] 目前参数只支持 simple (number str) ,其他的都算object',
    `creator` varchar(45) NOT NULL COMMENT '创建人',
    `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    `updator` varchar(45) NOT NULL COMMENT '更新者',
@@ -16,7 +16,7 @@ CREATE TABLE `flows` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `name` varchar(45) NOT NULL COMMENT '流程名称',
    `description` varchar(255) NOT NULL COMMENT '流程描述',
-   `entry_arguments` json NOT NULL COMMENT '入口参数定义参数定义[{"name":"id","type":"int","description":"ip信息"},"name":"sm","type":"object","description":"对象类型"}] 目前参数只支持 int str ,其他的都算object',
+   `entry_arguments` json NOT NULL COMMENT '入口参数定义参数定义[{"name":"id","type":"simple","description":"ip信息"},"name":"sm","type":"object","description":"对象类型"}] 目前参数只支持 simple(number str),其他的都算object',
    `stepcount` int(11) NOT NULL COMMENT '步骤数',
    `creator` varchar(45) NOT NULL COMMENT '创建者',
    `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -31,7 +31,7 @@ CREATE TABLE `flow_steps` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `flowid` int(11) NOT NULL COMMENT '所属流程',
    `modulename` varchar(128) NOT NULL COMMENT '所属模块名称',
-   `stepnum` int(11) NOT NULL COMMENT '步骤序号',
+   `stepnum` int(11) NOT NULL COMMENT '步骤序号 必须1开始并且连续',
    `stepname` varchar(45) NOT NULL COMMENT '步骤名称',
    `stepdescription` varchar(255) NOT NULL COMMENT '步骤描述',
    `failed_retrycounts` int(11) NOT NULL DEFAULT '0' COMMENT '失败重试次数(0:不重试)',
@@ -55,7 +55,7 @@ CREATE TABLE `instances` (
    `curstepnum` int(11) NOT NULL DEFAULT '1' COMMENT '当前步骤',
    `curstepruncount` int(11) NOT NULL DEFAULT '0' COMMENT '当前步骤执行次数',
    `nextruntime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '下次运行时间',
-   `status` varchar(10) NOT NULL COMMENT '状态(''init'',''standby'',''running'')',
+   `status` varchar(10) NOT NULL COMMENT '状态(''init'',''standby'',''running''，''pause'',''fail'',''success'')',
    `creator` varchar(45) NOT NULL COMMENT '创建者',
    `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    `updator` varchar(45) NOT NULL COMMENT '更新者',
@@ -74,6 +74,7 @@ CREATE TABLE `instance_steps` (
    `status` varchar(10) DEFAULT NULL COMMENT '状态消息',
    `message` varchar(5000) DEFAULT NULL,
    `createdtime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+   `modifiedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (`id`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='流程运行步骤信息';
 
@@ -84,7 +85,7 @@ CREATE TABLE `instance_rundata` (
    `instanceid` int(11) NOT NULL COMMENT '实例id',
    `keyname` varchar(128) NOT NULL COMMENT 'keyname',
    `keyvalue` varchar(2000) NOT NULL COMMENT 'key值',
-   `keytype` varchar(45) NOT NULL COMMENT 'key类型( int str json)',
+   `keytype` varchar(45) NOT NULL COMMENT 'key类型( simple(number str) object)',
    `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    PRIMARY KEY (`id`),
    UNIQUE KEY `udx_key` (`instanceid`,`keyname`)

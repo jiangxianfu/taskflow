@@ -10,7 +10,9 @@ import sys
 import importlib
 import getopt
 import logging
+import json
 from taskflowdb import TaskFlowDB
+import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -18,23 +20,44 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 def main(flow_instance_id):
     try:
         taskflowdb = TaskFlowDB()
-        # print("task_flow_id:%d" % flow_instance_id)
-
         # 获取基础数据信息
         instance_data = taskflowdb.get_instance(flow_instance_id)
         flow_id = instance_data["flowid"]
         step_num = instance_data["curstepnum"]
         flow_step_data = taskflowdb.get_flow_step(flow_id, step_num)
 
-        module = flow_step_data["modulename"]
+        module_name = flow_step_data["modulename"]
+
+        module_data = taskflowdb.get_module(module_name)
+        arguments_definition = json.loads(module_data["arguments"])
 
         # 动态导入运行模块
-        inner_module = importlib.import_module("modules.%s" % module)
+        inner_module = importlib.import_module("modules.%s" % module_name)
         inner_method = getattr(inner_module, "main")
 
         # 处理参数数据
-        inner_kwargs = {"id": ""}
+        # 实例获取到的参数
+        dict_instance_arguments = json.loads(instance_data["arguments"])
+        # 运行中的产生的参数
+        dict_instance_run_data = taskflowdb.get_instance_run_data(flow_instance_id)
+        inner_kwargs = {}
 
+        for arg_item in arguments_definition:
+            key_name = arg_item["name"]
+            if key_name in dict_instance_arguments:
+                inner_kwargs[key_name] = dict_instance_arguments.get(key_name)
+            elif key_name in dict_instance_run_data:
+                inner_kwargs[key_name] = dict_instance_run_data.get(key_name)
+            else:
+                inner_kwargs[key_name] = None
+
+        # 记录instance_steps数据
+        step_name = flow_step_data["stepname"]
+        json_data = json.dumps(inner_kwargs)
+        instance_step_id = taskflowdb.add_instance_step(flow_instance_id, step_num, step_name, json_data, 'running', '')
+
+        # 暂时关闭释放资源,因为连接串资源宝贵
+        taskflowdb.close()
         # 运行模块
         ret = inner_method(**inner_kwargs)
         result = True
@@ -42,9 +65,47 @@ def main(flow_instance_id):
         if ret:
             result = ret[0]
             message = str(ret[1])
-        print(result, message)
+        exec_status = u'success' if result else u'fail'
+
+        # 重新开启db资源
+        taskflowdb = TaskFlowDB()
+        # 更新instance_steps 数据
+        taskflowdb.save_instance_step_status(instance_step_id, exec_status, message)
+        # 处理执行结果
+        if result:
+            # 执行成功
+            # 是否整个流程结束
+            if step_num >= instance_data["stepcount"]:
+                taskflowdb.save_instance_status(flow_instance_id, exec_status)
+            else:
+                # 下个步骤是否需要暂停
+                nextstep_waitseconds = int(flow_step_data["nextstep_waitseconds"])
+                curstepnum = step_num + 1
+                curstepruncount = 0
+                if nextstep_waitseconds == -1:
+                    exec_status = 'pause'
+                    next_runtime = datetime.datetime.now()
+                else:
+                    exec_status = 'standby'
+                    # 加入 next step 延迟执行逻辑
+                    next_runtime = datetime.datetime.now() + datetime.timedelta(seconds=nextstep_waitseconds)
+                taskflowdb.save_instance_status(flow_instance_id, exec_status,
+                                                curstepnum, curstepruncount, next_runtime)
+        else:
+            # 如果执行失败，则判断是否继续执行重试
+            failed_retrycounts = int(flow_step_data["failed_retrycounts"])
+            curstepruncount = int(instance_data["curstepruncount"]) + 1
+            # 如果不重试 或者 超过重试次数
+            if failed_retrycounts == 0 or curstepruncount > failed_retrycounts:
+                taskflowdb.save_instance_status(flow_instance_id, exec_status, cur_step_runcount=curstepruncount)
+            else:
+                exec_status = 'standby'
+                # 默认一分钟后重试
+                next_runtime = datetime.datetime.now() + datetime.timedelta(seconds=60)
+                taskflowdb.save_instance_status(flow_instance_id, exec_status, cur_step_runcount=curstepruncount,
+                                                next_runtime=next_runtime)
     except Exception as ex:
-        print("err", ex)
+        logging.error("task run err %s", ex)
 
 
 if __name__ == '__main__':
