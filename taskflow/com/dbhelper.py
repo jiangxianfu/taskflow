@@ -22,7 +22,7 @@ class DBHelper:
 
     def close(self):
         """Closes this database connection."""
-        if self.conn is not None:
+        if self.conn:
             self.conn.close()
             self.conn = None
 

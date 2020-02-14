@@ -10,23 +10,32 @@ import sys
 import importlib
 import getopt
 import logging
-from com.dbhelper import DBHelper
-from com.dbconfig import connect_short
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+from taskflowdb import TaskFlowDB
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def main(flow_instance_id):
     try:
-        print("task_flow_id:%d" % flow_instance_id)
-        db = DBHelper(connect_short(""))
-        data = db.query("select * from flow_instance where id =%s" % flow_instance_id)
-        step_num = data["step_num"]
-        data2 = db.query("select * from flow_steps where flow_id=%s and step_num=%s", (flow_instance_id,step_num))
-        module = data2["module_name"]
+        taskflowdb = TaskFlowDB()
+        # print("task_flow_id:%d" % flow_instance_id)
+
+        # 获取基础数据信息
+        instance_data = taskflowdb.get_instance(flow_instance_id)
+        flow_id = instance_data["flowid"]
+        step_num = instance_data["curstepnum"]
+        flow_step_data = taskflowdb.get_flow_step(flow_id, step_num)
+
+        module = flow_step_data["modulename"]
+
+        # 动态导入运行模块
         inner_module = importlib.import_module("modules.%s" % module)
         inner_method = getattr(inner_module, "main")
+
+        # 处理参数数据
         inner_kwargs = {"id": ""}
+
+        # 运行模块
         ret = inner_method(**inner_kwargs)
         result = True
         message = ""

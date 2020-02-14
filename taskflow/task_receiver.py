@@ -6,41 +6,42 @@ description: 该方法主要是用于启动整个工作流程序
 
 """
 
-import traceback
 import time
 import os
 import subprocess
-import redis
+from redisdb import RedisDB
+import socket
 import settings
-
-
-base_dir = os.path.dirname(os.path.abspath(__file__))
 
 def message_process(flow_instance_id):
     try:
-        # get instance id
+        redisdb = RedisDB()
         # 获取需要运行的模块
-        filename = os.path.join(base_dir, 'task_run.py')
-        output_filename = "/var/log/taskflow/task_run_%s.log" % flow_instance_id
+        output_filename = settings.TASK_RUN_LOG_FORMAT % flow_instance_id
         with open(output_filename, "a") as outfile:
-            subprocess.Popen(["python3", "-u", filename, "-i", flow_instance_id], stdout=outfile, stderr=subprocess.STDOUT)
-        #save subprocessid,flow_instance_id,worker_host_name to redis
+            pm = subprocess.Popen([settings.PYTHONBIN, "-u", settings.TASK_RUN_FILE, "-i", flow_instance_id],
+                                  stdout=outfile, stderr=subprocess.STDOUT)
+            json_data = {
+                "worker_process_id": pm.pid,
+                "worker_hostname": socket.gethostname(),
+                "flow_instance_id": flow_instance_id,
+                "start_time": time.time()
+            }
+            redisdb.set_running_instance("instance:%s" % flow_instance_id, json_data)
+
     except Exception as ex:
         print(ex)
 
 
 def main():
     # get redis data
-    try:
-        conn = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
-        while True:
-            data = conn.rpop("taskflow:messagequeues")
-            if data is not None and type(data) == int:
-                message_process(data)
-            time.sleep(1)
-    except:
-        print(traceback.format_exc())
-        time.sleep(3)
+    redisdb = RedisDB()
+    while True:
+        data = redisdb.pop_msg_queue()
+        if data is not None and type(data) == int:
+            message_process(data)
+        time.sleep(1)
+
 
 if __name__ == '__main__':
     main()
