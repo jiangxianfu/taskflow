@@ -36,7 +36,7 @@ class TaskFlowDB:
         获取待处理的实例信息
         :return:
         """
-        sql = "select id from instances where nexruntime <= now() and status = 'standby' limit 50;"
+        sql = "select id from instances where nextruntime <= now() and status = 'standby' limit 50;"
         data = self.db.querydic(sql)
         return data
 

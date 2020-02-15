@@ -1,3 +1,8 @@
+--创建数据库
+CREATE DATABASE taskflowdb;
+
+USE taskflowdb;
+
 -- 模块表：用于定义创建的模块信息
 CREATE TABLE `modules` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
