@@ -42,12 +42,15 @@ def main(flow_instance_id):
         dict_instance_run_data = taskflowdb.get_instance_run_data(flow_instance_id)
         inner_kwargs = {}
 
+        # 处理输入参数别名的情况并设定模块运行数据
+        input_argment_alias = dict(flow_step_data["inputargalias"])
         for arg_item in arguments_definition:
             key_name = arg_item["name"]
+            input_key_name = input_argment_alias.get(key_name, key_name)
             if key_name in dict_instance_arguments:
-                inner_kwargs[key_name] = dict_instance_arguments.get(key_name)
+                inner_kwargs[key_name] = dict_instance_arguments.get(input_key_name)
             elif key_name in dict_instance_run_data:
-                inner_kwargs[key_name] = dict_instance_run_data.get(key_name)
+                inner_kwargs[key_name] = dict_instance_run_data.get(input_key_name)
             else:
                 inner_kwargs[key_name] = None
 
@@ -59,14 +62,24 @@ def main(flow_instance_id):
         # 暂时关闭释放资源,因为连接串资源宝贵
         taskflowdb.close()
         # 运行模块
-        ret = inner_method(**inner_kwargs)
         result = True
         message = ""
-        if ret:
-            result = ret[0]
-            message = str(ret[1])
+        return_data = {}
+        try:
+            ret = inner_method(**inner_kwargs)
+            if ret and type(ret) is tuple:
+                len_ret = len(ret)
+                if len_ret > 0:
+                    result = bool(ret[0])
+                if len_ret > 1:
+                    message = str(ret[1])
+                if len_ret > 2:
+                    return_data = dict(ret[2])
+        except Exception as ex:
+            logging.error("run module err:%s", ex)
+            result = False
+            message = str(ex)
         exec_status = u'success' if result else u'fail'
-
         # 重新开启db资源
         taskflowdb = TaskFlowDB()
         # 更新instance_steps 数据
@@ -74,6 +87,18 @@ def main(flow_instance_id):
         # 处理执行结果
         if result:
             # 执行成功
+            # 参数别名处理与运行数据保存
+            output_argment_alias = dict(flow_step_data["outputargalias"])
+            for key, value in return_data.items():
+                new_key_name = output_argment_alias.get(key, key)
+                new_value = value
+                if type(value) in [tuple, set]:
+                    new_value = list(value)
+                if type(value) in [list, set, dict, tuple]:
+                    key_type = 'object'
+                else:
+                    key_type = 'simple'
+                taskflowdb.set_instance_run_data(flow_instance_id, key_type, new_key_name, json.dumps(new_value))
             # 是否整个流程结束
             if step_num >= instance_data["stepcount"]:
                 taskflowdb.save_instance_status(flow_instance_id, exec_status)

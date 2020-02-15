@@ -14,8 +14,6 @@ RUN mkdir -p /taskflow /var/log/supervisor /var/log/taskflow
 # set work dir
 WORKDIR /taskflow
 
-
-
 # set mirrors
 RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
 RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo

@@ -1,6 +1,6 @@
 supervisor
 tornado
 GitPython
+redis
 requests
 PyMySQL
-redis
