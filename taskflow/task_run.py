@@ -136,6 +136,7 @@ def main(flow_instance_id):
         # remove running flow_instance_id
         redisdb = RedisDB()
         redisdb.remove_running_instance(flow_instance_id)
+        redisdb.close()
     except Exception as ex:
         logging.error("task run remove redis running key err %s", ex)
 

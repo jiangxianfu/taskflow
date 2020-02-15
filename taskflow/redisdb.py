@@ -10,6 +10,9 @@ class RedisDB:
         self.conn = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
     def __del__(self):
+        self.close()
+
+    def close(self):
         if self.conn:
             self.conn.close()
             self.conn = None
