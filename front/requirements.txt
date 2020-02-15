@@ -1,0 +1,5 @@
+GitPython
+redis
+requests
+PyMySQL
+cryptography
