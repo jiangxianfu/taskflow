@@ -19,7 +19,7 @@ class TaskFlowDB:
 
     def __init__(self):
         self.db = DBHelper(
-            connect_mysql(settings.MYSQL_HOST, settings.REDIS_PORT,
+            connect_mysql(settings.MYSQL_HOST, settings.MYSQL_PORT,
                           settings.MYSQL_USER, settings.MYSQL_PWD,
                           settings.MYSQL_DB))
 

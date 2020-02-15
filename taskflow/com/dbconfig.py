@@ -14,5 +14,5 @@ def connect_mysql(host, port, user, password, database):
 
 def connect_short(keyname):
     if keyname == "testdb":
-        return __connect_mysql("127.0.0.1", 3306, "test", "12345678", "testdb")
+        return connect_mysql("127.0.0.1", 3306, "test", "12345678", "testdb")
     return None
