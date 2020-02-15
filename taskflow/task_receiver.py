@@ -27,7 +27,7 @@ def message_process(flow_instance_id):
                 "flow_instance_id": flow_instance_id,
                 "start_time": time.time()
             }
-            redisdb.set_running_instance("instance:%s" % flow_instance_id, json_data)
+            redisdb.set_running_instance("taskflow:actives:%s" % flow_instance_id, json_data)
 
     except Exception as ex:
         print(ex)

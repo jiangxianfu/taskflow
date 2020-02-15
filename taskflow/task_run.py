@@ -12,6 +12,7 @@ import getopt
 import logging
 import json
 from taskflowdb import TaskFlowDB
+from redisdb import RedisDB
 import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -131,6 +132,12 @@ def main(flow_instance_id):
                                                 next_runtime=next_runtime)
     except Exception as ex:
         logging.error("task run err %s", ex)
+    try:
+        # remove running flow_instance_id
+        redisdb = RedisDB()
+        redisdb.remove_running_instance(flow_instance_id)
+    except Exception as ex:
+        logging.error("task run remove redis running key err %s", ex)
 
 
 if __name__ == '__main__':

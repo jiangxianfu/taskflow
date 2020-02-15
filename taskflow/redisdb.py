@@ -20,5 +20,8 @@ class RedisDB:
     def pop_msg_queue(self):
         return self.conn.rpop("taskflow:messagequeues")
 
-    def set_running_instance(self, key, value):
-        self.conn.set(key, json.dumps(value), ex=1 * 24 * 60 * 60)
+    def add_running_instance(self, instance_id, dict_data):
+        self.conn.hset("taskflow:activies", instance_id, json.dumps(dict_data))
+
+    def remove_running_instance(self, instance_id):
+        self.conn.hdel("taskflow:activies", instance_id)
