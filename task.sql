@@ -10,7 +10,7 @@ CREATE TABLE `modules` (
    `modifiedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (`id`),
    UNIQUE KEY `udx_module` (`name`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='模块定义表';
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='模块定义表';
 -- 流程表：用于定义流程信息
 CREATE TABLE `flows` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -24,7 +24,7 @@ CREATE TABLE `flows` (
    `modifiedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (`id`),
    UNIQUE KEY `udx_flow` (`name`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='流程定义表';
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程定义表';
 
 -- 流程步骤表：用于定义流程步骤的功能
 CREATE TABLE `flow_steps` (
@@ -44,7 +44,7 @@ CREATE TABLE `flow_steps` (
    `modifiedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (`id`),
    UNIQUE KEY `udx_stepnum` (`flowid`,`stepnum`) /*!80000 INVISIBLE */
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='流程明细步骤';
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程明细步骤';
 
 -- 实例信息：真正运行的实例信息主表
 CREATE TABLE `instances` (
@@ -63,7 +63,7 @@ CREATE TABLE `instances` (
    `updator` varchar(45) NOT NULL COMMENT '更新者',
    `modifiedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (`id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='工作流实例';
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='工作流实例';
 
 
 -- 实例步骤表：记录当时实例运行的步骤信息及执行的参数与输出结果信息
@@ -78,7 +78,7 @@ CREATE TABLE `instance_steps` (
    `createdtime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
    `modifiedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (`id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='流程运行步骤信息';
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程运行步骤信息';
 
 
 -- 实例运行数据表：用于串接步骤间的数据关系，类似内存数据，这样可以更好的交换步骤间的数据输入与输出信息，目前支持int,str,json类型
@@ -91,6 +91,6 @@ CREATE TABLE `instance_rundata` (
    `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    PRIMARY KEY (`id`),
    UNIQUE KEY `udx_key` (`instanceid`,`keyname`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='实例运行中的数据';
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='实例运行中的数据';
 
 
