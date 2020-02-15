@@ -14,7 +14,7 @@ services:
       - "3306:3306"
     command: ["mysqld"]
   taskmaster:
-    image: taskflow
+    image: jiangxianfu/taskflow
     container_name: task-master
     environment:
       - DOCKER_HOST=${HOSTNAME}
@@ -29,7 +29,7 @@ services:
       - taskredis
       - taskdb
   taskworker:
-    image: taskflow
+    image: jiangxianfu/taskflow
     container_name: task-worker
     environment:
       - DOCKER_HOST=${HOSTNAME}
