@@ -20,7 +20,7 @@ RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Cen
 COPY pip.conf /etc/pip.conf
 
 # install system packages
-RUN yum install -y python3 git && yum clean all
+RUN yum install -y python3 git telnet && yum clean all
 # install pip packages
 COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt --no-cache-dir

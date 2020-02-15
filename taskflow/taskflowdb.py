@@ -6,8 +6,9 @@ date: 2020-01-29
 description: 操作数据的DB
 """
 
-from com.dbconfig import connect_short
+from com.dbconfig import connect_mysql
 from com.dbhelper import DBHelper
+import settings
 import json
 
 
@@ -17,7 +18,10 @@ class TaskFlowDB:
     """
 
     def __init__(self):
-        self.db = DBHelper(connect_short("testdb"))
+        self.db = DBHelper(
+            connect_mysql(settings.MYSQL_HOST, settings.REDIS_PORT,
+                          settings.MYSQL_USER, settings.MYSQL_PWD,
+                          settings.MYSQL_DB))
 
     def __del__(self):
         self.close()
