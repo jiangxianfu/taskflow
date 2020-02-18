@@ -36,11 +36,11 @@
 1. 必须有main(**kwargs)入口函数
 2. main函数返回值
 
-	> 情况三：没有返回
+	> 情况一：没有返回
 
-	> 情况一：bool类型
+	> 情况二：bool类型
 
-	> 情况二：tuple类型 bool,message 
+	> 情况三：tuple类型 bool,message 
 
 	> 情况四：tuple类型 bool,message,data 注:data必须是字典类型
 
