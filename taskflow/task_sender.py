@@ -6,13 +6,18 @@ description: 该方法主要是用于启动整个工作流程序
 
 """
 
-
 import time
 import logging
 from redisdb import RedisDB
 from taskflowdb import TaskFlowDB
+import sys
+import traceback
+
+logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def main():
+    logging.info("taskflow sender is running")
     taskflowdb = TaskFlowDB()
     redisdb = RedisDB()
     while True:
@@ -25,14 +30,15 @@ def main():
             for item in data:
                 redisdb.push_msg_queue(item["id"])
                 sended_ids.append(item["id"])
-        except Exception as ex:
-            logging.warning("push redis err: %s", ex)
+        except:
+            logging.warning("push redis err \n %s", traceback.format_exc())
         if len(sended_ids):
             for item in sended_ids:
                 taskflowdb.save_instance_status(item, 'running')
 
         if len(sended_ids) != len(data):
-            raise Exception("redis may be err")
+            logging.error("redis data error: sended len not equal data len")
+            raise Exception("redis data error")
         time.sleep(2)
 
 

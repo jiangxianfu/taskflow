@@ -12,6 +12,7 @@ services:
     image: mysql:8.0
     container_name: task-db
     environment:
+      TZ: "Asia/Shanghai"
       MYSQL_ROOT_PASSWORD: 12345678
     volumes:
       - mysql-volume:/var/lib/mysql

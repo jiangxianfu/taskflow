@@ -11,12 +11,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # docker test
 REDIS_HOST = "task-redis"
 REDIS_PORT = 6379
-REDIS_DB = 1
+REDIS_DB = 0
 # local test
 """
 REDIS_HOST = "127.0.0.1"
 REDIS_PORT = 6379
-REDIS_DB = 1
+REDIS_DB = 0
 """
 # MySql 配置
 # docker test
@@ -38,6 +38,5 @@ MYSQL_DB = "taskflowdb"
 TASK_RUN_FILE = os.path.join(BASE_DIR, 'task_run.py')
 TASK_RUN_LOG_FORMAT = "/var/log/taskflow/task_run_%s.log"
 
-# PYTHONBIN = "/usr/bin/python3"
+PYTHONBIN = "/usr/bin/python3"
 
-PYTHONBIN = "python3"

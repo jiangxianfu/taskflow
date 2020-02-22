@@ -18,7 +18,7 @@ import traceback
 import socket
 from com.utils import CustomJSONEncoder
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def main(flow_instance_id):
