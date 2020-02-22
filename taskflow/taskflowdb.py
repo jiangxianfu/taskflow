@@ -68,14 +68,14 @@ class TaskFlowDB:
         return None
 
     def get_flow_step(self, flow_id, step_num):
-        sql = "select * from flow_steps where flow_id=%s and step_num=%s limit 1"
+        sql = "select * from flow_steps where flowid=%s and stepnum=%s limit 1"
         data = self.db.querydic(sql, (flow_id, step_num))
         if len(data) > 0:
             return data[0]
         return None
 
     def get_module(self, module_name):
-        sql = "select * from modules where module_name=%s limit 1"
+        sql = "select * from modules where name=%s limit 1"
         data = self.db.querydic(sql, (module_name,))
         if len(data) > 0:
             return data[0]
@@ -92,9 +92,9 @@ class TaskFlowDB:
                 dict_data[item["keyname"]] = item["keyvalue"]
         return dict_data
 
-    def add_instance_step(self, flow_instance_id, step_num, step_name, json_kwargs, status, message):
-        sql = "insert into instance_steps(instanceid,stepnum,stepname,arguments,status,message) values(%s,%s,%s,%s,%s,%s)"
-        return self.db.insert(sql, (flow_instance_id, step_num, step_name, json_kwargs, status, message))
+    def add_instance_step(self, flow_instance_id, step_num, step_name, json_kwargs, worker_name, status, message):
+        sql = "insert into instance_steps(instanceid,stepnum,stepname,arguments,workername,status,message) values(%s,%s,%s,%s,%s,%s,%s)"
+        return self.db.insert(sql, (flow_instance_id, step_num, step_name, json_kwargs, worker_name, status, message))
 
     def save_instance_step_status(self, instance_step_id, status, message):
         sql = "update instance_steps set status=%s , message=%s where id =%s"

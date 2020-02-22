@@ -14,8 +14,11 @@ import json
 from taskflowdb import TaskFlowDB
 from redisdb import RedisDB
 import datetime
+import traceback
+import socket
+from com.utils import CustomJSONEncoder
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def main(flow_instance_id):
@@ -44,7 +47,7 @@ def main(flow_instance_id):
         inner_kwargs = {}
 
         # 处理输入参数别名的情况并设定模块运行数据
-        input_argment_alias = dict(flow_step_data["inputargalias"])
+        input_argment_alias = json.loads(flow_step_data["inputargalias"])
         for arg_item in arguments_definition:
             key_name = arg_item["name"]
             input_key_name = input_argment_alias.get(key_name, key_name)
@@ -54,11 +57,14 @@ def main(flow_instance_id):
                 inner_kwargs[key_name] = dict_instance_run_data.get(input_key_name)
             else:
                 inner_kwargs[key_name] = None
+        inner_kwargs["sys_taskflow_instance"] = instance_data
 
         # 记录instance_steps数据
         step_name = flow_step_data["stepname"]
-        json_data = json.dumps(inner_kwargs)
-        instance_step_id = taskflowdb.add_instance_step(flow_instance_id, step_num, step_name, json_data, 'running', '')
+        json_data = json.dumps(inner_kwargs, cls=CustomJSONEncoder)
+        worker_name = socket.gethostname()
+        instance_step_id = taskflowdb.add_instance_step(flow_instance_id, step_num, step_name, json_data, worker_name,
+                                                        'running', '')
 
         # 暂时关闭释放资源,因为连接串资源宝贵
         taskflowdb.close()
@@ -76,10 +82,10 @@ def main(flow_instance_id):
                     message = str(ret[1])
                 if len_ret > 2:
                     return_data = dict(ret[2])
-        except Exception as ex:
-            logging.error("run module err:%s", ex)
+        except:
             result = False
-            message = str(ex)
+            message = traceback.format_exc()
+            logging.error("run module err \n %s", message)
         exec_status = u'success' if result else u'fail'
         # 重新开启db资源
         taskflowdb = TaskFlowDB()
@@ -89,7 +95,7 @@ def main(flow_instance_id):
         if result:
             # 执行成功
             # 参数别名处理与运行数据保存
-            output_argment_alias = dict(flow_step_data["outputargalias"])
+            output_argment_alias = json.loads(flow_step_data["outputargalias"])
             for key, value in return_data.items():
                 new_key_name = output_argment_alias.get(key, key)
                 new_value = value
@@ -99,7 +105,9 @@ def main(flow_instance_id):
                     key_type = 'object'
                 else:
                     key_type = 'simple'
-                taskflowdb.set_instance_run_data(flow_instance_id, key_type, new_key_name, json.dumps(new_value))
+                if 'object' == key_type:
+                    new_value = json.dumps(new_value, cls=CustomJSONEncoder)
+                taskflowdb.set_instance_run_data(flow_instance_id, key_type, new_key_name, new_value)
             # 是否整个流程结束
             if step_num >= instance_data["stepcount"]:
                 taskflowdb.save_instance_status(flow_instance_id, exec_status)
@@ -130,15 +138,15 @@ def main(flow_instance_id):
                 next_runtime = datetime.datetime.now() + datetime.timedelta(seconds=60)
                 taskflowdb.save_instance_status(flow_instance_id, exec_status, cur_step_runcount=curstepruncount,
                                                 next_runtime=next_runtime)
-    except Exception as ex:
-        logging.error("task run err %s", ex)
+    except:
+        logging.error("task run err \n %s", traceback.format_exc())
     try:
         # remove running flow_instance_id
         redisdb = RedisDB()
         redisdb.remove_running_instance(flow_instance_id)
         redisdb.close()
-    except Exception as ex:
-        logging.error("task run remove redis running key err %s", ex)
+    except:
+        logging.error("task run remove redis running key err \n %s", traceback.format_exc())
 
 
 if __name__ == '__main__':

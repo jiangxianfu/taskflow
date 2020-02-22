@@ -57,6 +57,13 @@
 	它是整个架构中最重要的部分，也是最核心的部分；
 	它负责整理流程步骤的顺序执行，加载并运行模块；
 	同时整合模块参数输入，输出，模块数据的保存工作。
+	这个模块如果在应急情况下也可以单独手工运行
+	手工运行方法: task_run.py -i <task_flow_id>
+
+测试模块脚本(task_module_test.py)
+
+	这个脚本主要用于单独调试模板的脚本的，但是跑的主函数是test_main 并且参数不是自动适配数据的，需要自己填充已用于测试
+	使用方法: task_module_test.py -m <module_name>
 
 运行流程图：
 
@@ -66,3 +73,11 @@
 运行模块的关键程序instance表数据更新逻辑:
 
 ![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/task_run_flow.png)
+
+
+单元测试使用的是pytest:
+
+```
+cd taskflow
+python -m pytest -v tests
+```

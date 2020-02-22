@@ -14,7 +14,7 @@ class DBHelper:
         if connection is None:
             raise Exception("connection is not null.")
         self.conn = connection
-        if not autocommit:
+        if autocommit:
             self.conn.autocommit(True)
 
     def __del__(self):
