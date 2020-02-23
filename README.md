@@ -95,7 +95,7 @@ python -m pytest -v tests
 
 ![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/flow_steps.png)
 
-![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/instance.png)
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/instances.png)
 
 ![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/instance_steps.png)
 
