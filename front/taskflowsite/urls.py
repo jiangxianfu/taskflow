@@ -18,8 +18,12 @@ from django.contrib import admin
 from django.urls import path
 
 from taskflowsite.views.index import IndexView
+from taskflowsite.views.module import ModuleListView, ModuleSaveView, module_delete
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
+    path('module/list', ModuleListView.as_view(), name='module_list'),
+    path('module/save/(?P<pk>[0-9]+)', ModuleSaveView.as_view(), name='module_save'),
+    path('module/delete/(?P<pk>[0-9]+)', module_delete, name='module_delete'),
     path('admin/', admin.site.urls)
 ]
