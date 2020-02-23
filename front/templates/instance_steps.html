@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="px-4">
+        <h1>实例执行历史--id:{{ instance.id }}--title:{{ instance.title }}--status:{{ instance.status }}</h1>
+        <div class="list-group">
+            {% for item in instance_steps %}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">#{{ item.stepnum }}. {{ item.stepname }} <span class="d-inline p-2 text-white instance-status-{{ item.status }}">{{ item.status }}</span></h5>
+                        <small class="text-muted">{{ item.createdtime|date:'Y-m-d H:i:s' }}</small>
+                    </div>
+                    <p class="mb-1">message: {{ item.message }}</p>
+                    <span>输入参数:</span>
+                    <small class="text-muted">{{ item.arguments }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <br/>
+{% endblock %}

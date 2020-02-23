@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="px-4">
+        <h2>模块列表</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Arguments</th>
+                    <th>Updator</th>
+                    <th>UpdateTime</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in modules %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.arguments }}</td>
+                        <td>{{ item.updator }}</td>
+                        <td>{{ item.modifiedtime | date:'Y-m-d' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

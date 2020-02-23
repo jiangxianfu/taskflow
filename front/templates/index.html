@@ -1,8 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a
-            mostly barebones HTML document.</p>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">敏捷工作流引擎</h1>
+            <h2 class="display-4">Smart Task Flow</h2>
+            <ul>
+                <li>一个可以敏捷定制化的流程任务工具</li>
+                <li>用户只需要关注自己需要实现的模块</li>
+                <li>支持流程中的任务进行重试，延迟执行，callback回调，任务跳过，任务终止</li>
+                <li>具有任务执行分布式处理提高任务处理容量</li>
+                <li>添加新模块不需要重启即可生效</li>
+                <li>源代码极简模式，前端与后端分开管理没有依赖 (前端甚至可以没有)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-4">
+                <h2>模块(module)</h2>
+                <p>用途：唯一需要自己去实现的功能代码</p>
+                <p>表：注册你的模块,以便系统可以认识你的模块</p>
+                <p><a class="btn btn-secondary" href="{% url 'module_list' %}" role="button">View details &raquo;</a>
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h2>流程(flow)</h2>
+                <p>用途：根据需求将模块进行串联</p>
+                <p>表：注册流程及流程步骤,定义输入输出参数</p>
+                <p><a class="btn btn-secondary" href="{% url 'flow_list' %}" role="button">View details &raquo;</a></p>
+            </div>
+            <div class="col-md-4">
+                <h2>实例(instance)</h2>
+                <p>用途：根据流程实际运行的数据</p>
+                <p>表：存储用户创建的流程数据及步骤运行数据和状态</p>
+                <p><a class="btn btn-secondary" href="{% url 'instance_list' %}" role="button">View details &raquo;</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4 shadow-sm">
+                        <img class="bd-placeholder-img card-img-top" src="/static/img/schema.png"/>
+                        <div class="card-body">
+                            <p class="card-text">整体架构及数据流向</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4 shadow-sm">
+                        <img class="bd-placeholder-img card-img-top" src="/static/img/task_run_flow.png"/>
+                        <div class="card-body">
+                            <p class="card-text">运行模块的关键程序实例表数据更新逻辑</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="px-4">
+        <h2>实例列表</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>FlowId</th>
+                    <th>Arguments</th>
+                    <th>RunStepNum</th>
+                    <th>RetryCount</th>
+                    <th>NextRunTime</th>
+                    <th>Status</th>
+                    <th>Updator</th>
+                    <th>UpdateTime</th>
+                    <th>Op</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in instances %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.flowid }}</td>
+                        <td>{{ item.arguments }}</td>
+                        <td>{{ item.curstepnum }}/{{ item.stepcount }}</td>
+                        <td>{{ item.curstepruncount }}</td>
+                        <td>{{ item.nextruntime| date:'Y-m-d H:i:s' }}</td>
+                        <td><div class="d-inline p-2 text-white instance-status-{{ item.status }}">{{ item.status }}</div></td>
+                        <td>{{ item.updator }}</td>
+                        <td>{{ item.modifiedtime | date:'Y-m-d' }}</td>
+                        <td><a href="{% url 'instance_steps' item.id %}">明细</a> </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

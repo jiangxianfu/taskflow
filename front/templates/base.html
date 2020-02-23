@@ -1,16 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-    {% load static %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="smart task flow">
     <meta name="author" content="Steven">
+    <meta name="theme-color" content="#563d7c">
     <title>{% block title %}Task Flow Site{% endblock %}</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-    <!-- Custom styles for this template -->
+    <link rel="icon" href="/static/img/favicon.ico">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/main.css" rel="stylesheet">
     {% block css %}{% endblock %}
 </head>
@@ -25,26 +23,26 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">首页 <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{% url 'index' %}">首页 <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">模块管理</a>
+                <a class="nav-link" href="{% url 'module_list' %}">模块管理</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">流程管理</a>
+                <a class="nav-link" href="{% url 'flow_list' %}">流程管理</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">实例管理</a>
+                <a class="nav-link" href="{% url 'instance_list' %}">实例管理</a>
             </li>
         </ul>
     </div>
 </nav>
 
-<main role="main" class="container">
+<main role="main">
     {% block content %}{% endblock %}
-</main><!-- /.container -->
-<script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
-<script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+</main>
+<script src="/static/js/jquery-3.4.1.min.js"></script>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
 {% block script %}{% endblock %}
 </body>
 </html>

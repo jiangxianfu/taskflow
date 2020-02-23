@@ -19,11 +19,27 @@ from django.urls import path
 
 from taskflowsite.views.index import IndexView
 from taskflowsite.views.module import ModuleListView, ModuleSaveView, module_delete
+from taskflowsite.views.flow import FlowListView, FlowSaveView, flow_delete
+from taskflowsite.views.instance import InstanceListView, InstanceSaveView, instance_delete
+from taskflowsite.views.instance_step import InstanceStepsView
 
 urlpatterns = [
+    # index
     path('', IndexView.as_view(), name='index'),
-    path('module/list', ModuleListView.as_view(), name='module_list'),
-    path('module/save/(?P<pk>[0-9]+)', ModuleSaveView.as_view(), name='module_save'),
-    path('module/delete/(?P<pk>[0-9]+)', module_delete, name='module_delete'),
+    # module
+    path('module/list/', ModuleListView.as_view(), name='module_list'),
+    path('module/save/<int:id>/', ModuleSaveView.as_view(), name='module_save'),
+    path('module/delete/<int:id>/', module_delete, name='module_delete'),
+    # flow
+    path('flow/list/', FlowListView.as_view(), name='flow_list'),
+    path('flow/save/<int:id>/', FlowSaveView.as_view(), name='flow_save'),
+    path('flow/delete/<int:id>/', flow_delete, name='flow_delete'),
+    # instance
+    path('instance/list/', InstanceListView.as_view(), name='instance_list'),
+    path('instance/save/<int:id>/', InstanceSaveView.as_view(), name='instance_save'),
+    path('instance/delete/<int:id>/', instance_delete, name='instance_delete'),
+
+    path('instance/steps/<int:instance_id>/', InstanceStepsView.as_view(), name="instance_steps"),
+    # admin urls
     path('admin/', admin.site.urls)
 ]
