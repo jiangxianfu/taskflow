@@ -83,3 +83,19 @@
 cd taskflow
 python -m pytest -v tests
 ```
+
+
+数据示例:
+
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/index.png)
+
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/modules.png)
+
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/flows.png)
+
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/flow_steps.png)
+
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/instance.png)
+
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/instance_steps.png)
+

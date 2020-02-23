@@ -22,6 +22,7 @@ from taskflowsite.views.module import ModuleListView, ModuleSaveView, module_del
 from taskflowsite.views.flow import FlowListView, FlowSaveView, flow_delete
 from taskflowsite.views.instance import InstanceListView, InstanceSaveView, instance_delete
 from taskflowsite.views.instance_step import InstanceStepsView
+from taskflowsite.views.flow_step import FlowStepsView
 
 urlpatterns = [
     # index
@@ -34,6 +35,8 @@ urlpatterns = [
     path('flow/list/', FlowListView.as_view(), name='flow_list'),
     path('flow/save/<int:id>/', FlowSaveView.as_view(), name='flow_save'),
     path('flow/delete/<int:id>/', flow_delete, name='flow_delete'),
+
+    path('flow/steps/<int:flow_id>/', FlowStepsView.as_view(), name="flow_steps"),
     # instance
     path('instance/list/', InstanceListView.as_view(), name='instance_list'),
     path('instance/save/<int:id>/', InstanceSaveView.as_view(), name='instance_save'),

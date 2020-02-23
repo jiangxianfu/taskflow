@@ -13,6 +13,7 @@
                     <th>StepCount</th>
                     <th>Updator</th>
                     <th>UpdateTime</th>
+                    <th>Op</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,6 +26,7 @@
                         <td>{{ item.stepcount }}</td>
                         <td>{{ item.updator }}</td>
                         <td>{{ item.modifiedtime | date:'Y-m-d' }}</td>
+                        <td><a href="{% url 'flow_steps' item.id %}">明细</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
