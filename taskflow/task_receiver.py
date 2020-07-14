@@ -28,7 +28,7 @@ def message_process(flow_instance_id):
         logging.debug("task_run_filename:%s", settings.TASK_RUN_FILE)
         logging.debug("task python bin location:%s", settings.PYTHONBIN)
         with open(output_filename, "a") as outfile:
-            pm = subprocess.Popen([settings.PYTHONBIN, "-u", settings.TASK_RUN_FILE, "-i", str(flow_instance_id)],
+            pm = subprocess.Popen([settings.PYTHONBIN, "-u", settings.TASK_RUN_FILE, "-i", str(flow_instance_id)], close_fds=True,
                                   stdout=outfile, stderr=subprocess.STDOUT)
             json_data = {
                 "worker_process_id": pm.pid,
