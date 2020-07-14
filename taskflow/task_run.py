@@ -16,6 +16,7 @@ from redisdb import RedisDB
 import datetime
 import traceback
 import socket
+from com.daemonize import daemonize
 from com.utils import CustomJSONEncoder
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -150,6 +151,8 @@ def main(flow_instance_id):
 
 
 if __name__ == '__main__':
+    # run as background
+    daemonize()
     opts = []
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hi:", ["id="])
