@@ -73,15 +73,20 @@ def main(flow_instance_id):
         message = ""
         return_data = {}
         try:
+            logging.info("----------run module: %s start----------" % module_name)
             ret = inner_method(**inner_kwargs)
-            if ret and type(ret) is tuple:
-                len_ret = len(ret)
-                if len_ret > 0:
-                    result = bool(ret[0])
-                if len_ret > 1:
-                    message = str(ret[1])
-                if len_ret > 2:
-                    return_data = dict(ret[2])
+            logging.info("----------run module: %s finish----------" % module_name)
+            if ret is not None:
+                if type(ret) is bool:
+                    result = ret
+                elif type(ret) is tuple:
+                    len_ret = len(ret)
+                    if len_ret > 0:
+                        result = bool(ret[0])
+                    if len_ret > 1:
+                        message = str(ret[1])
+                    if len_ret > 2:
+                        return_data = dict(ret[2])
         except:
             result = False
             message = traceback.format_exc()
