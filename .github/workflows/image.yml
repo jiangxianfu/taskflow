@@ -15,7 +15,11 @@ jobs:
     steps:
       - name: setup buildx
         uses: docker/setup-buildx-action@v1.6.0
+        with:
+          install: true
       - name: check file
-        run: ls -la
+        run: |
+          pwd
+          ls -l
       - name: build
         run: docker build -f Dockerfile .
