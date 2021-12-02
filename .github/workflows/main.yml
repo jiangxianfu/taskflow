@@ -32,6 +32,7 @@ jobs:
       - name: Python check
         run: |
           python --version
+          pip --version
           ls -l  /usr/bin/
           pip list
           pip install requests
