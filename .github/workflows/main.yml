@@ -31,6 +31,7 @@ jobs:
         run: whereis python
       - name: Python check
         run: |
+          python --version
           ls -l  /usr/bin/
           pip list
           pip install requests
