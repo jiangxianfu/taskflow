@@ -16,4 +16,5 @@ jobs:
       - name: build image
         uses: mr-smithers-excellent/docker-build-push@v5.6
         with:
+          image: taskflow
           dockerfile: 'taskflow/Dockerfile'
