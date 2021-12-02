@@ -13,8 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: build image
-        uses: mr-smithers-excellent/docker-build-push@v5.6
-        with:
-          image: taskflow
-          dockerfile: 'taskflow/Dockerfile'
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v1.6.0
+      - name: build
+        run: docker build -f taskflow/Dockerfile .
