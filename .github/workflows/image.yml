@@ -9,6 +9,11 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-runs:
-  using: docker
-  image: 'taskflow/Dockerfile'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build image
+        uses: mr-smithers-excellent/docker-build-push@v5.6
+        with:
+          dockerfile: 'taskflow/Dockerfile'
