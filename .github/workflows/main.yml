@@ -33,7 +33,11 @@ jobs:
         run: |
           python --version
           pip --version
-          ls -l  /usr/bin/
+          python3 --version
+          pip3 --version
+          python2 --version
+          /usr/bin/python --version
+          /usr/bin/python2 --version
           pip list
           pip install requests
 
