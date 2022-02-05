@@ -39,6 +39,11 @@ def update_source_task_status(db: TaskFlowDB, source_type: str, source_id: int, 
         db.save_taskform_status(source_id, status)
 
 
+def parse_args_json_str(db: TaskFlowDB, instance_id: int):
+    data = {}
+    return json.dumps(data, cls=CustomJSONEncoder)
+
+
 def main(instance_id: int):
     """
     当前运行的一定是module
@@ -132,7 +137,7 @@ def main(instance_id: int):
                 update_source_task_status(taskflowdb, source_type, source_id, result_status)
                 return
             # 计算获取下一步骤的参数数据
-            next_args_json = json.dumps({}, cls=CustomJSONEncoder)
+            next_args_json = parse_args_json_str(taskflowdb, instance_id)
 
             next_instance_id = taskflowdb.create_instance(source_id, source_type, parent_id,
                                                           "module", next_task, next_args_json, 'running')
