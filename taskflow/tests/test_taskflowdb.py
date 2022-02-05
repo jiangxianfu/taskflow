@@ -1,29 +1,25 @@
 # -*- coding: utf-8 -*-
-
-import settings
-from com.dbconfig import connect_mysql
-from com.dbhelper import DBHelper
-from taskflowdb import TaskFlowDB
-
-print(settings.MYSQL_USER)
-conn = connect_mysql(settings.MYSQL_HOST, settings.MYSQL_PORT,
-                     settings.MYSQL_USER, settings.MYSQL_PWD,
-                     settings.MYSQL_DB)
-db = DBHelper(conn)
+import unittest
+from contrib.taskflowdb import TaskFlowDB
 
 
-def test_dbhelper():
-    version = db.querydic("select 'hello'")
-    assert 'hello' in version[0]
+class TestTaskFlowDB(unittest.TestCase):
+    def setUp(self):
+        self.db = TaskFlowDB()
 
+    def test_dbhelper(self):
+        with self.db.conn.cursor() as cur:
+            cur.execute("select 'hello' as n")
+            version = cur.fetchall()
+        print('ssssssssssssss', version[0]['n'])
+        assert 'hello' == version[0]['n']
 
-def test_tables():
-    assert len(db.querydic("show tables")) > 0
+    def test_tables(self):
+        with self.db.conn.cursor() as cur:
+            cur.execute("show tables")
+            data = cur.fetchall()
+            assert len(data) > 0
 
-
-def test_taskflowdb():
-    flowdb = TaskFlowDB()
-    data = flowdb.get_undo_instances()
-    assert type(data) is list
-
-
+    def test_taskflowdb(self):
+        data = self.db.get_undo_taskforms()
+        assert type(data) is tuple

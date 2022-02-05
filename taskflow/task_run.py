@@ -4,6 +4,17 @@ author: jiangxf
 date: 2020-01-29
 description: 该方法主要是用于启动整个工作流程序
 
+    #动态加载module
+    #判断module属于action还是check
+    #根据结果判断流程允许情况
+    #if判断当前task是否成功,
+       如果是workflow则：
+          #创建任务更新下个任务的状态
+          #if end
+        #更新任务
+    #else
+        #更新任务
+
 """
 
 import sys
@@ -11,147 +22,125 @@ import importlib
 import getopt
 import logging
 import json
-from taskflowdb import TaskFlowDB
-from redisdb import RedisDB
-import datetime
 import traceback
-import socket
-from com.utils import CustomJSONEncoder
+from contrib.taskflowdb import TaskFlowDB
+from contrib.redisdb import RedisDB
+from contrib.utils import CustomJSONEncoder
+from contrib.workflow_spec import WorkflowSpec
+import inspect
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def main(flow_instance_id):
+def update_source_task_status(db: TaskFlowDB, source_type: str, source_id: int, status: str):
+    if source_type == "schedule":
+        db.update_sched("end", source_id, status)
+    elif source_type == "form":
+        db.save_taskform_status(source_id, status)
+
+
+def main(instance_id: int):
+    """
+    当前运行的一定是module
+    """
     try:
         taskflowdb = TaskFlowDB()
         # 获取基础数据信息
-        instance_data = taskflowdb.get_instance(flow_instance_id)
-        flow_id = instance_data["flowid"]
-        step_num = instance_data["curstepnum"]
-        flow_step_data = taskflowdb.get_flow_step(flow_id, step_num)
-
-        module_name = flow_step_data["modulename"]
-
-        module_data = taskflowdb.get_module(module_name)
-        arguments_definition = json.loads(module_data["arguments"])
-
+        instance_data = taskflowdb.get_instance(instance_id)
+        if "module" != instance_data["task_type"]:
+            logging.error("当前运行的不是模块!")
+            raise ValueError("id %s is not module" % instance_id)
+        module_name = instance_data["task_name"]
         # 动态导入运行模块
-        inner_module = importlib.import_module("modules.%s" % module_name)
-        inner_method = getattr(inner_module, "main")
-
-        # 处理参数数据
+        inner_func = importlib.import_module("modules.%s" % module_name)
+        inner_func_main = getattr(inner_func, "main")
         # 实例获取到的参数
-        dict_instance_arguments = json.loads(instance_data["arguments"])
+        inner_func_main_full_arg_spec = inspect.getfullargspec(inner_func_main)
+        inner_func_main_argument_list = inner_func_main_full_arg_spec.args
+        # 处理参数数据
         # 运行中的产生的参数
-        dict_instance_run_data = taskflowdb.get_instance_run_data(flow_instance_id)
-        inner_kwargs = {}
-
+        inner_func_kwargs = {}
         # 处理输入参数别名的情况并设定模块运行数据
-        input_argment_alias = json.loads(flow_step_data["inputargalias"])
-        for arg_item in arguments_definition:
-            key_name = arg_item["name"]
-            input_key_name = input_argment_alias.get(key_name, key_name)
-            if key_name in dict_instance_arguments:
-                inner_kwargs[key_name] = dict_instance_arguments.get(input_key_name)
-            elif key_name in dict_instance_run_data:
-                inner_kwargs[key_name] = dict_instance_run_data.get(input_key_name)
-            else:
-                inner_kwargs[key_name] = None
-        inner_kwargs["sys_taskflow_instance"] = instance_data
-
-        # 记录instance_steps数据
-        step_name = flow_step_data["stepname"]
-        json_data = json.dumps(inner_kwargs, cls=CustomJSONEncoder)
-        worker_name = socket.gethostname()
-        instance_step_id = taskflowdb.add_instance_step(flow_instance_id, step_num, step_name, json_data, worker_name,
-                                                        'running', '')
-
+        input_arguments = json.loads(instance_data["args_json"])
+        for arg_name in inner_func_main_argument_list:
+            if arg_name in input_arguments:
+                arg_value = input_arguments.get(arg_name)
+                inner_func_kwargs[arg_name] = arg_value
+        if inner_func_main_full_arg_spec.varkw:
+            inner_func_kwargs["sys_instance"] = instance_data
         # 暂时关闭释放资源,因为连接串资源宝贵
         taskflowdb.close()
         # 运行模块
-        result = True
+        success = True
         message = ""
         return_data = {}
+        run_result = None
         try:
             logging.info("----------run module: %s start----------" % module_name)
-            ret = inner_method(**inner_kwargs)
+            run_result = inner_func_main(**inner_func_kwargs)
             logging.info("----------run module: %s finish----------" % module_name)
-            if ret is not None:
-                if type(ret) is bool:
-                    result = ret
-                elif type(ret) is tuple:
-                    len_ret = len(ret)
+            if run_result is not None:
+                if type(run_result) is bool:
+                    success = run_result
+                elif type(run_result) is tuple:
+                    len_ret = len(run_result)
                     if len_ret > 0:
-                        result = bool(ret[0])
+                        success = bool(run_result[0])
                     if len_ret > 1:
-                        message = str(ret[1])
+                        message = str(run_result[1])
                     if len_ret > 2:
-                        return_data = dict(ret[2])
+                        return_data = dict(run_result[2])
         except:
-            result = False
+            success = False
             message = traceback.format_exc()
             logging.error("run module err \n %s", message)
-        exec_status = u'success' if result else u'fail'
+        redisdb = RedisDB()
+        if str(module_name).startswith("check_"):
+            if run_result is None:
+                # 这里需要出来下check的功能
+                data = redisdb.get_check_hash(instance_id)
+                times = int(data) if data else 0
+                redisdb.set_check_hash(instance_id, times + 1)
+                return
+            else:
+                redisdb.del_check_hash(instance_id)
+        result_status = 'success' if success else 'failure'
         # 重新开启db资源
         taskflowdb = TaskFlowDB()
-        # 更新instance_steps 数据
-        taskflowdb.save_instance_step_status(instance_step_id, exec_status, message)
+        # 更新instance 数据
+        result_json = json.dumps(return_data, cls=CustomJSONEncoder)
+        taskflowdb.save_instance_status(instance_id, result_status, result_message=message, result_json=result_json)
         # 处理执行结果
-        if result:
-            # 执行成功
-            # 参数别名处理与运行数据保存
-            output_argment_alias = json.loads(flow_step_data["outputargalias"])
-            for key, value in return_data.items():
-                new_key_name = output_argment_alias.get(key, key)
-                new_value = value
-                if type(value) in [tuple, set]:
-                    new_value = list(value)
-                if type(value) in [list, set, dict, tuple]:
-                    key_type = 'object'
-                else:
-                    key_type = 'simple'
-                if 'object' == key_type:
-                    new_value = json.dumps(new_value, cls=CustomJSONEncoder)
-                taskflowdb.set_instance_run_data(flow_instance_id, key_type, new_key_name, new_value)
-            # 是否整个流程结束
-            if step_num >= instance_data["stepcount"]:
-                taskflowdb.save_instance_status(flow_instance_id, exec_status)
+        # 如果是工作流
+        source_id = instance_data["source_id"]
+        source_type = instance_data["source_type"]
+        parent_id = instance_data["parent_id"]
+        if parent_id > 0:
+            parent_instance = taskflowdb.get_instance(parent_id)
+            workflow_name = parent_instance["task_name"]
+            wf = WorkflowSpec(workflow_name)
+            cur_task = wf.tasks[instance_data["task_name"]]
+            if cur_task == wf.end:
+                update_source_task_status(taskflowdb, source_type, source_id, result_status)
+                return
+            if success:
+                next_task = cur_task.get("on-success")
             else:
-                # 下个步骤是否需要暂停
-                nextstep_waitseconds = int(flow_step_data["nextstep_waitseconds"])
-                curstepnum = step_num + 1
-                curstepruncount = 0
-                if nextstep_waitseconds == -1:
-                    exec_status = 'pause'
-                    next_runtime = datetime.datetime.now()
-                else:
-                    exec_status = 'standby'
-                    # 加入 next step 延迟执行逻辑
-                    next_runtime = datetime.datetime.now() + datetime.timedelta(seconds=nextstep_waitseconds)
-                taskflowdb.save_instance_status(flow_instance_id, exec_status,
-                                                curstepnum, curstepruncount, next_runtime)
+                taskflowdb.save_instance_status(parent_id, result_status, result_message=message)
+                next_task = cur_task.get("on-failure")
+            if not next_task:
+                update_source_task_status(taskflowdb, source_type, source_id, result_status)
+                return
+            # 计算获取下一步骤的参数数据
+            next_args_json = json.dumps({}, cls=CustomJSONEncoder)
+
+            next_instance_id = taskflowdb.create_instance(source_id, source_type, parent_id,
+                                                          "module", next_task, next_args_json, 'running')
+            redisdb.push_run_queue(next_instance_id)
         else:
-            # 如果执行失败，则判断是否继续执行重试
-            failed_retrycounts = int(flow_step_data["failed_retrycounts"])
-            curstepruncount = int(instance_data["curstepruncount"]) + 1
-            # 如果不重试 或者 超过重试次数
-            if failed_retrycounts == 0 or curstepruncount > failed_retrycounts:
-                taskflowdb.save_instance_status(flow_instance_id, exec_status, cur_step_runcount=curstepruncount)
-            else:
-                exec_status = 'standby'
-                # 默认一分钟后重试
-                next_runtime = datetime.datetime.now() + datetime.timedelta(seconds=60)
-                taskflowdb.save_instance_status(flow_instance_id, exec_status, cur_step_runcount=curstepruncount,
-                                                next_runtime=next_runtime)
+            update_source_task_status(taskflowdb, source_type, source_id, result_status)
     except:
         logging.error("task run err \n %s", traceback.format_exc())
-    try:
-        # remove running flow_instance_id
-        redisdb = RedisDB()
-        redisdb.remove_running_instance(flow_instance_id)
-        redisdb.close()
-    except:
-        logging.error("task run remove redis running key err \n %s", traceback.format_exc())
 
 
 if __name__ == '__main__':
@@ -160,16 +149,16 @@ if __name__ == '__main__':
         opts, args = getopt.getopt(sys.argv[1:], "hi:", ["id="])
     except getopt.GetoptError:
         print("args are error, please use task_run.py -h.")
-    task_flow_id = 0
-    help_info = "usage: task_run.py -i <task_flow_id>"
+    instance_id = 0
+    help_info = "usage: task_run.py -i <task_instance_id>"
     if len(opts) > 0:
         for opt, arg in opts:
             if opt == "-h":
                 print(help_info)
             elif opt in ("-i", "--id"):
-                task_flow_id = int(arg)
-        if task_flow_id > 0:
-            main(task_flow_id)
+                instance_id = int(arg)
+        if instance_id > 0:
+            main(instance_id)
         else:
             print(help_info)
     else:

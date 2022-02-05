@@ -2,7 +2,7 @@
 """
 demo use test method
 """
-from com.utils import ping
+from modules.libs.config import connect_short
 import logging
 
 
@@ -18,7 +18,7 @@ def main(**kwargs):
     print("**kwargs")
     print(kwargs["id"])
     print("test module is running...")
-    print(ping())
+    print(connect_short("good"))
     logging.info("demo end")
     return True, "ok"
 
@@ -36,5 +36,5 @@ def test_main(**kwargs):
     print("**kwargs")
     print(kwargs["id"])
     print("test module is running...")
-    print(ping())
+    print(connect_short("good"))
     return True, "ok"

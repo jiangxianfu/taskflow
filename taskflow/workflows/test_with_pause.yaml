@@ -1,0 +1,17 @@
+description: good
+begin: action_task1
+end: action_task3
+tasks:
+  action_task1:
+    module: action_zeusdata
+    on-success: task2
+    on-failure: end_task
+  task2:
+    module: action_task2
+    retry: 10
+    on-success: action_task3
+  action_task3:
+    module: pause
+    on-success: end_task
+  task:
+    module: notify

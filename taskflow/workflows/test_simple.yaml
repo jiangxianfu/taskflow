@@ -1,0 +1,9 @@
+tasks:
+  action_task1:
+    module: action_zeusdata
+    on-success: task2
+  task2:
+    module: action_zeusdatax
+    on-success: action_task3
+  action_task3:
+    module: delete_mongo

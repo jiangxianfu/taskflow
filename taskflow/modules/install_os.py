@@ -2,7 +2,7 @@
 """
 demo use test method
 """
-from com.utils import ping
+from modules.libs.config import connect_short
 import logging
 
 
@@ -17,13 +17,13 @@ def main(**kwargs):
     logging.info("test")
     print("**kwargs")
     print("test module is running...")
-    print(ping())
+    print(connect_short("good"))
     print("kwargs", kwargs)
     print(kwargs["os"])
     print(kwargs["cpu_num"])
     print(kwargs["mem_gb"])
     print(kwargs["disk_gb"])
-    ping()
+    connect_short("good")
     # get install os result
     ip = "127.0.0.1"
     port = 22
@@ -44,7 +44,7 @@ def test_main(**kwargs):
     print(kwargs["cpu_num"])
     print(kwargs["mem_gb"])
     print(kwargs["disk_gb"])
-    ping()
+    connect_short("good")
     # get install os result
     ip = "127.0.0.1"
     port = 22

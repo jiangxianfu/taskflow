@@ -11,6 +11,7 @@ import importlib
 import getopt
 import logging
 import traceback
+import inspect
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -19,12 +20,14 @@ def main(module_name):
     try:
         # 动态导入运行模块
         inner_module = importlib.import_module("modules.%s" % module_name)
-        inner_method = getattr(inner_module, "test_main")
+        inner_func = getattr(inner_module, "test_main")
+        inner_fun_args = inspect.getfullargspec(inner_func)
         inner_kwargs = {}
         # init sys empty instance
-        inner_kwargs["sys_taskflow_instance"] = {}
+        if inner_fun_args.varkw:
+            inner_kwargs["sys_taskflow_instance"] = {}
         try:
-            ret = inner_method(**inner_kwargs)
+            ret = inner_func(**inner_kwargs)
             print("module return data:", ret)
         except:
             logging.error("run module err \n %s", traceback.format_exc())

@@ -2,7 +2,7 @@
 """
 demo use test method
 """
-from com.utils import ping
+from modules.libs.config import connect_short
 import logging
 
 
@@ -19,7 +19,7 @@ def main(**kwargs):
     print(kwargs["user"])
     print(kwargs["password"])
     print("ssh server")
-    ping()
+    connect_short("good")
     print("config data")
     print("install monitor script")
     print("change root password to random")
@@ -40,7 +40,7 @@ def test_main(**kwargs):
     print(kwargs["user"])
     print(kwargs["password"])
     print("ssh server")
-    ping()
+    connect_short("good")
     print("config data")
     print("install monitor script")
     print("change root password to random")

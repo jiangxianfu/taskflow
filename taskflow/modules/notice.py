@@ -2,7 +2,7 @@
 """
 demo use test method
 """
-from com.utils import ping
+from modules.libs.utils import ping
 import logging
 
 
@@ -24,13 +24,17 @@ def main(**kwargs):
     logging.info("hi, %s, 你的流程:%s-%s ,已经顺利完成", creator, flow_name, flow_description)
     logging.info("notice end")
 
+
 # test main
-def test_main(**kwargs):
+def test_main(a, b, c=7, **kwargs):
     """
     用于测试的main 函数
     :param kwargs:
     :return:
     """
+    print("a", a, "b", b, "c", c)
+    # kwargs = {}
+    print("kwargs", kwargs)
     instance = kwargs["sys_taskflow_instance"]
     # set demo
     instance["title"] = "hello"

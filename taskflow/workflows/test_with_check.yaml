@@ -1,0 +1,13 @@
+tasks:
+  action_task1:
+    module: action_zeusdata
+    on-success: check_task2
+    on-failure: end_task
+  check_task2:
+    module: checker_zeusdatax
+    retry: 10
+    on-success: action_task3
+  action_task3:
+    module: delete_mongo
+  end_task:
+    module: notify

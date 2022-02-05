@@ -18,32 +18,16 @@ services:
       - mysql-volume:/var/lib/mysql
     ports:
       - "3306:3306"
-  taskmaster:
+  taskflow:
     image: jiangxianfu/taskflow:latest
     container_name: task-master
     environment:
       DOCKER_HOST: ${HOSTNAME}
     volumes:
       - .:/taskflow
-      - taskmaster-volume:/var/log/taskflow
-      - ./supervisord_master.conf:/etc/supervisord.conf
-    command: ["supervisord"]
-    depends_on:
-      - taskredis
-      - taskdb
-    links:
-      - taskredis
-      - taskdb
-  taskworker:
-    image: jiangxianfu/taskflow:latest
-    container_name: task-worker
-    environment:
-      DOCKER_HOST: ${HOSTNAME}
-    volumes:
-      - .:/taskflow
-      - taskworker-volume:/var/log/taskflow
-      - ./supervisord_worker.conf:/etc/supervisord.conf
-    command: ["supervisord"]
+      - taskflow-volume:/var/log/taskflow
+      - ./supervisord.ini:/etc/supervisord.d/taskflow.ini
+    command: [ "supervisord" ]
     depends_on:
       - taskredis
       - taskdb
@@ -53,5 +37,4 @@ services:
 volumes:
   redis-volume:
   mysql-volume:
-  taskmaster-volume:
-  taskworker-volume:
+  taskflow-volume:

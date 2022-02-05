@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-import settings
-import redis
+import unittest
 
-print(settings.REDIS_HOST)
-db = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
+from contrib.redisdb import RedisDB
 
 
-def test_redisdb():
-    db.set("test_key", b"hello", ex=60)
-    data = db.get("test_key")
-    assert b"hello" == data
+class TestRedisDB(unittest.TestCase):
+    def setUp(self) -> None:
+        self.db = RedisDB()
+
+    def test_redisdb(self):
+        self.db.conn.set("test_key", b"hello", ex=60)
+        data = self.db.conn.get("test_key")
+        assert b"hello" == data
