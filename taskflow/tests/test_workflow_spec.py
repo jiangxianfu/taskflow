@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 
 from contrib.workflow_spec import WorkflowSpec
