@@ -8,7 +8,6 @@ description: 操作数据的DB
 
 from . import settings
 import pymysql
-import json
 
 
 class TaskFlowDB:
@@ -47,11 +46,11 @@ class TaskFlowDB:
             data = cur.fetchall()
             return data
 
-    def create_instance(self, source_id, source_type, parent_id, task_type, task_name, args_json, status):
-        sql = """insert into task_instance(source_id,source_type,parent_id,task_type,task_name,args_json,status)
-                    values(%s,%s,%s,%s,%s,%s,%s)"""
+    def create_instance(self, name, source_id, source_type, parent_id, task_type, task_name, args_json, status):
+        sql = """insert into task_instance(name,source_id,source_type,parent_id,task_type,task_name,args_json,status)
+                    values(%s,%s,%s,%s,%s,%s,%s,%s)"""
         with self.conn.cursor() as cur:
-            cur.execute(sql, (source_id, source_type, parent_id, task_type, task_name, args_json, status))
+            cur.execute(sql, (name, source_id, source_type, parent_id, task_type, task_name, args_json, status))
             return cur.lastrowid
 
     def save_taskform_status(self, form_id, status):
@@ -71,11 +70,11 @@ class TaskFlowDB:
     def update_sched(self, action, sched_id, status, trigger_last_time=None, trigger_next_time=None):
         with self.conn.cursor() as cur:
             if action == "start":
-                sql = """update tasks_schedule set trigger_last_time=%s,trigger_next_time=%s,
+                sql = """update task_schedule set trigger_last_time=%s,trigger_next_time=%s,
                                     status=%s where id=%s"""
                 cur.execute(1, sql, (trigger_last_time, trigger_next_time, status, sched_id))
             elif action == "end":
-                sql = """update tasks_schedule set status=%s where id=%s"""
+                sql = """update task_schedule set status=%s where id=%s"""
                 cur.execute(1, sql, (status, sched_id))
 
     def save_instance_status(self, instance_id, status, worker_hostname=None, worker_pid=None,
@@ -105,34 +104,8 @@ class TaskFlowDB:
     def get_instance(self, instance_id):
         sql = "select * from task_instance where id=%s"
         with self.conn.cursor() as cur:
-            cur.execute(sql, (id,))
+            cur.execute(sql, (instance_id,))
             data = cur.fetchall()
             if data:
                 return data[0]
             return None
-
-
-"""
-    def get_instance_run_data(self, instance_id):
-        sql = "select keyname,keyvalue,keytype from instance_rundata where instanceid=%s"
-        data = self.db.querydic(sql, (instance_id,))
-        dict_data = {}
-        for item in data:
-            if item["keytype"] == "object":
-                dict_data[item["keyname"]] = json.loads(item["keyvalue"])
-            else:
-                dict_data[item["keyname"]] = item["keyvalue"]
-        return dict_data
-
-    def add_instance_step(self, flow_instance_id, step_num, step_name, json_kwargs, worker_name, status, message):
-        sql = "insert into instance_steps(instanceid,stepnum,stepname,arguments,workername,status,message) values(%s,%s,%s,%s,%s,%s,%s)"
-        return self.db.insert(sql, (flow_instance_id, step_num, step_name, json_kwargs, worker_name, status, message))
-
-    def save_instance_step_status(self, instance_step_id, status, message):
-        sql = "update instance_steps set status=%s , message=%s where id =%s"
-        return self.db.execute(sql, (status, message, instance_step_id))
-
-    def set_instance_run_data(self, flow_instance_id, keytype, keyname, keyvalue):
-        sql = "insert into instance_rundata(instanceid,keyname,keyvalue,keytype) values(%s,%s,%s,%s) ON DUPLICATE KEY UPDATE keytype=%s , keyvalue=%s"
-        return self.db.execute(sql, (flow_instance_id, keyname, keyvalue, keytype, keytype, keyvalue))
-"""

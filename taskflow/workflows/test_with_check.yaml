@@ -1,4 +1,7 @@
-tasks:
+description: good
+start_step: action_task1
+end_step: action_task3
+steps:
   action_task1:
     module: action_zeusdata
     on-success: check_task2

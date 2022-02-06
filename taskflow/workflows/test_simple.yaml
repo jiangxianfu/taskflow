@@ -1,9 +1,21 @@
-tasks:
+description: good
+start_step: action_task1
+end_step: action_task3
+steps:
   action_task1:
     module: action_zeusdata
+    parameters:
+      sql: "ggd"
+      mo: "dddd"
     on-success: task2
   task2:
     module: action_zeusdatax
+    parameters:
+      aac: "sss"
+      abc_iss: "sss"
     on-success: action_task3
   action_task3:
     module: delete_mongo
+    parameters:
+      ddd: "ssss"
+      saqw: "sssss"

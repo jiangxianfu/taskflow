@@ -2,7 +2,7 @@
 import datetime
 import unittest
 
-from scheduler import get_arguments_json_to_str
+from scheduler import get_arguments
 
 
 class TestScheduler(unittest.TestCase):
@@ -18,5 +18,5 @@ def get_arguments(**kwargs):
     print(kwargs.get('run_time'))
     return data
 """
-        json_data = get_arguments_json_to_str(code, datetime.datetime.now())
+        json_data = get_arguments(code, datetime.datetime.now())
         print(json_data)

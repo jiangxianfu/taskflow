@@ -21,12 +21,13 @@ import datetime
 from contrib.taskflowdb import TaskFlowDB
 from contrib.redisdb import RedisDB
 from contrib.workflow_spec import WorkflowSpec
+from contrib.utils import CustomJSONEncoder
 import json
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def get_arguments_json_to_str(python_code, run_time):
+def get_arguments(python_code, run_time, to_json=False):
     """
     直接跑代码
     """
@@ -34,9 +35,9 @@ def get_arguments_json_to_str(python_code, run_time):
     exec(python_code.encode('utf8'), ns)
     kwargs = {"run_time": run_time}
     data = ns["get_arguments"](**kwargs)
-    args_json = json.dumps(data, ensure_ascii=False)
-    # print(args_json)
-    return args_json
+    if to_json:
+        data = json.dumps(data, ensure_ascii=False, cls=CustomJSONEncoder)
+    return data
 
 
 def main():
@@ -55,24 +56,28 @@ def main():
                                                           '%Y-%m-%d %H:%M:%S')
                 cron = croniter(item["cron_sched"], trigger_time)
                 args_python_code = item["args_python_code"]
-                args_json = get_arguments_json_to_str(args_python_code, trigger_time)
+                args_json = get_arguments(args_python_code, trigger_time, True)
+
                 # 默认没有父任务
                 parent_id = 0
                 source_id = item["id"]
                 source_type = "schedule"
                 if "workflow" == item["task_type"]:
                     # 则先创建父任务
-                    parent_id = taskflowdb.create_instance(source_id, source_type, parent_id,
+                    parent_id = taskflowdb.create_instance(item["task_name"], source_id, source_type, parent_id,
                                                            "workflow", item["task_name"], args_json,
                                                            'running')
                     wf = WorkflowSpec(item["task_name"])
-                    task_name = wf.begin
+                    step_name = wf.begin_step
+                    module_name = wf.steps[wf.begin_step]["module"]
+                    args_json = wf.get_step_parameters(parent_id, step_name, True)
                 elif "module" == item["task_type"]:
-                    task_name = item["task_name"]
+                    module_name = item["task_name"]
+                    step_name = module_name
                 else:
                     raise ValueError("task_type is invalid")
-                instance_id = taskflowdb.create_instance(source_id, source_type, parent_id,
-                                                         "module", task_name, args_json, 'running')
+                instance_id = taskflowdb.create_instance(step_name, source_id, source_type, parent_id,
+                                                         "module", module_name, args_json, 'running')
 
                 trigger_next_time = cron.get_next(datetime.datetime)
                 redisdb.push_run_queue(instance_id)

@@ -1,7 +1,7 @@
 description: good
-begin: action_task1
-end: action_task3
-tasks:
+start_step: action_task1
+end_step: action_task3
+steps:
   action_task1:
     module: action_zeusdata
     on-success: task2

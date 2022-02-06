@@ -41,19 +41,22 @@ def main():
                 parent_id = 0
                 if "workflow" == item["task_type"]:
                     # 则先创建父任务
-                    parent_id = taskflowdb.create_instance(source_id, source_type, parent_id,
+                    parent_id = taskflowdb.create_instance(item["task_name"], source_id, source_type, parent_id,
                                                            "workflow", item["task_name"], item["args_json"],
                                                            'running')
                     wf = WorkflowSpec(item["task_name"])
-                    task_name = wf.begin
-
+                    step_name = wf.begin_step
+                    module_name = wf.steps[step_name]["module"]
+                    args_json = wf.get_step_parameters(parent_id, step_name, True)
                 elif "module" == item["task_type"]:
-                    task_name = item["task_name"]
+                    module_name = item["task_name"]
+                    step_name = module_name
+                    args_json = item["args_json"]
                 else:
                     raise ValueError("task_type is invalid")
                 # 创建任务
-                instance_id = taskflowdb.create_instance(source_id, source_type, parent_id,
-                                                         "module", task_name, item["args_json"], 'running')
+                instance_id = taskflowdb.create_instance(step_name, source_id, source_type, parent_id,
+                                                         "module", module_name, args_json, 'running')
                 redisdb.push_run_queue(instance_id)
                 taskflowdb.save_taskform_status(item["id"], 'running')
             except:

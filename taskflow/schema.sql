@@ -34,6 +34,7 @@ CREATE TABLE `task_schedule` (
 
 CREATE TABLE `task_instance` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL COMMENT 'step_name或者module_name或者workflow_name',
   `source_id` int NOT NULL COMMENT '来源ID',
   `source_type` varchar(50) NOT NULL COMMENT '来源类型(schedule,form)',
   `parent_id` int NOT NULL DEFAULT '0' COMMENT '任务parent id,用于workflow类型',

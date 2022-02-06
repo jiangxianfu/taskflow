@@ -124,23 +124,24 @@ def main(instance_id: int):
             parent_instance = taskflowdb.get_instance(parent_id)
             workflow_name = parent_instance["task_name"]
             wf = WorkflowSpec(workflow_name)
-            cur_task = wf.tasks[instance_data["task_name"]]
-            if cur_task == wf.end:
+            cur_step_name = instance_data["name"]
+            if cur_step_name == wf.end:
                 update_source_task_status(taskflowdb, source_type, source_id, result_status)
                 return
+            cur_step = wf.steps[cur_step_name]
             if success:
-                next_task = cur_task.get("on-success")
+                next_step_name = cur_step.get("on-success")
             else:
                 taskflowdb.save_instance_status(parent_id, result_status, result_message=message)
-                next_task = cur_task.get("on-failure")
-            if not next_task:
+                next_step_name = cur_step.get("on-failure")
+            if not next_step_name:
                 update_source_task_status(taskflowdb, source_type, source_id, result_status)
                 return
             # 计算获取下一步骤的参数数据
-            next_args_json = parse_args_json_str(taskflowdb, instance_id)
-
-            next_instance_id = taskflowdb.create_instance(source_id, source_type, parent_id,
-                                                          "module", next_task, next_args_json, 'running')
+            next_module_name = wf.steps[next_step_name].get("module")
+            next_step_args_json = wf.get_step_parameters(instance_id, next_step_name, True)
+            next_instance_id = taskflowdb.create_instance(next_step_name, source_id, source_type, parent_id,
+                                                          "module", next_module_name, next_step_args_json, 'running')
             redisdb.push_run_queue(next_instance_id)
         else:
             update_source_task_status(taskflowdb, source_type, source_id, result_status)
