@@ -3,6 +3,8 @@ import os
 import yaml
 from .settings import BASE_DIR
 from .utils import CustomJSONEncoder
+from .taskflowdb import TaskFlowDB
+from .workflow_context import WorkflowContext
 import json
 
 """
@@ -57,9 +59,23 @@ class WorkflowSpec(object):
         # 获取系统属性
         return self.__getattribute__(name)
 
-    def get_step_parameters(self, instance_id, step_name, to_json=False):
+    def get_step_parameters(self, db: TaskFlowDB, instance_id: int, step_name: str, to_json: bool = False):
         step_item = self.steps[step_name]
+        parameters = step_item.get("parameters")
         data = {}
+        context = WorkflowContext(db, instance_id)
+        arguments = {"this": self, "ctx": context}
+        for param_name, param_eval in parameters.items():
+            # 判断当前是否是表达式
+            if param_eval.startswith("$"):
+                # 如果是转义符则转换
+                if param_eval.startswith("$$"):
+                    param_value = param_eval[1:]
+                else:
+                    param_value = eval(param_eval[1:], arguments)
+            else:
+                param_value = param_eval
+            data[param_name] = param_value
         if to_json:
             data = json.dumps(data, ensure_ascii=False, cls=CustomJSONEncoder)
-        return {}
+        return data

@@ -6,16 +6,20 @@ steps:
     module: action_zeusdata
     parameters:
       sql: "ggd"
-      mo: "dddd"
+      mo: $(1+1)
     on-success: task2
   task2:
     module: action_zeusdatax
     parameters:
       aac: "sss"
-      abc_iss: "sss"
+      abc_iss: $(this.steps["action_task1"])
     on-success: action_task3
   action_task3:
     module: delete_mongo
     parameters:
-      ddd: "ssss"
-      saqw: "sssss"
+      input_str: "test string"
+      input_for: $[i for i in range(5)]
+      input_array: $(True if len("jiangxf")>0 else False)
+      input_step: $(this.steps["task2"].get("module"))
+      input_str2_escape: $$sss
+      input_security: $(__import__("os").getcwd())

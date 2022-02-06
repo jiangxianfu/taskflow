@@ -39,11 +39,6 @@ def update_source_task_status(db: TaskFlowDB, source_type: str, source_id: int, 
         db.save_taskform_status(source_id, status)
 
 
-def parse_args_json_str(db: TaskFlowDB, instance_id: int):
-    data = {}
-    return json.dumps(data, cls=CustomJSONEncoder)
-
-
 def main(instance_id: int):
     """
     当前运行的一定是module
@@ -125,7 +120,7 @@ def main(instance_id: int):
             workflow_name = parent_instance["task_name"]
             wf = WorkflowSpec(workflow_name)
             cur_step_name = instance_data["name"]
-            if cur_step_name == wf.end:
+            if cur_step_name == wf.end_step:
                 update_source_task_status(taskflowdb, source_type, source_id, result_status)
                 return
             cur_step = wf.steps[cur_step_name]
@@ -139,7 +134,7 @@ def main(instance_id: int):
                 return
             # 计算获取下一步骤的参数数据
             next_module_name = wf.steps[next_step_name].get("module")
-            next_step_args_json = wf.get_step_parameters(instance_id, next_step_name, True)
+            next_step_args_json = wf.get_step_parameters(taskflowdb, instance_id, next_step_name, True)
             next_instance_id = taskflowdb.create_instance(next_step_name, source_id, source_type, parent_id,
                                                           "module", next_module_name, next_step_args_json, 'running')
             redisdb.push_run_queue(next_instance_id)
