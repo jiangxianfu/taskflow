@@ -6,7 +6,7 @@ from contrib.workflow_spec import WorkflowSpec
 class TestWorkflowSpec(unittest.TestCase):
 
     def test_read_yaml(self):
-        wf = WorkflowSpec("test_with_pause")
+        wf = WorkflowSpec("test_simple")
         print(dir(wf))
         print(wf.description)
         print(wf.steps)
