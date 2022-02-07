@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run MySql
-      run: docker run -p 3306:3306 mysql:8.0
+      run: docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:8.0
