@@ -18,5 +18,6 @@ jobs:
       run: docker run --name db -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:5.7
     - name: Test MySql
       run: |
+        sleep 30s
         docker ps
         docker exec db bash -c "mysql -uroot -p123456 -e 'show databases;'"
