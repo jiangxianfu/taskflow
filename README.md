@@ -1,6 +1,6 @@
 # Smart Task Flow
 
-工具定位：
+## 工具定位：
 
 1. 一个可以敏捷定制化的流程任务工具
 2. 用户只需要关注自己需要实现的模块
@@ -9,11 +9,20 @@
 5. 添加新模块不需要重启即可生效
 6. 源代码极简模式，前端与后端分开管理没有依赖 (前端甚至可以没有)
 
-工具解决问题：
+## 功能列表:
 
-	在日常运维中，经常会有这样的需求，制作一个通用的流程完成将人工操作改造成自动化流程步骤。
+1. 定时任务调度
+   > 执行任务流程
+   > 执行单步任务
+2. 单步任务执行
+   > 失败重试
+3. 流程任务执行
+    > 任务中断
+    > 失败重试
+    > 延迟执行
 
-举个例子：
+
+## 举个例子：
 
 有一家互联网公司，需要上线一批服务器，为了完成自动化上线的功能，需要以下几个步骤：
 1. CMS信息更新
@@ -29,11 +38,12 @@
 
 	为了敏捷和通用性，可以根据自己的需求快速的定制自己的模块,
 	模块的规范特别简单,
-	只需要在modules 文件夹中创建自己的模块脚本。
+	只需要在modules 文件夹中创建自己的模块脚本（以action_ 或check_开头）。
 
 模块规范：
 
-1. 必须有main(**kwargs)入口函数
+1. 必须有main() 函数
+
 2. main函数返回值
 
 	> 情况一：没有返回
@@ -46,11 +56,11 @@
 
 主要的服务说明:
 
-1. 待运行实例扫描服务(task_sender.py)   
+1. 待运行实例扫描服务(task_producer.py)   
 
-2. 任务发送服务(task_receiver.py)   
+2. 任务发送服务(task_consumer.py)   
 
-3. 扩展接口服务(task_webserver.py)
+3. 扩展接口服务(web_server.py)
 
 主要的运行模块说明(task_run.py):
 
@@ -60,16 +70,16 @@
 	这个模块如果在应急情况下也可以单独手工运行
 	手工运行方法: task_run.py -i <task_flow_id>
 
-测试模块脚本(task_module_test.py)
+测试模块脚本(test_module.py)
 
 	这个脚本主要用于单独调试模板的脚本的;
 	但是跑的主函数是test_main 并且参数不是自动适配数据的;
 	需要自己填充已用于测试。
-	使用方法: task_module_test.py -m <module_name>
+	使用方法: test_module.py -m <module_name>
 
 运行流程图：
 
-![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/schema.png)
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/architecture.png)
 
 
 运行模块的关键程序instance表数据更新逻辑:

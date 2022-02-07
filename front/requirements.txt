@@ -1,7 +1,0 @@
-Django
-GitPython
-redis
-requests
-PyMySQL
-mysqlclient
-cryptography
