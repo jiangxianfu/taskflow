@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  taskredis:
+  task-redis:
     image: redis:4.0
     container_name: task-redis
     ports:
       - "6379:6379"
-  taskdb:
+  task-db:
     image: mysql:8.0
     container_name: task-db
     environment:
@@ -14,7 +14,7 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     ports:
       - "3306:3306"
-  taskservice:
+  task-service:
     image: taskflow:latest
     container_name: task-service
     volumes:
@@ -22,9 +22,9 @@ services:
       - ./supervisord.conf:/etc/supervisord.conf
     command: ["supervisord"]
     depends_on:
-      - taskredis
-      - taskdb
+      - task-redis
+      - task-db
     links:
-      - taskredis
-      - taskdb
+      - task-redis
+      - task-db
 
