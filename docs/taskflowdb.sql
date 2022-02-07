@@ -1,3 +1,4 @@
+CREATE SCHEMA `taskflowdb`;
 CREATE TABLE `task_form` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL COMMENT '任务主题',

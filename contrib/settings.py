@@ -3,11 +3,13 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-REDIS_HOST = "127.0.0.1"
+# REDIS_HOST = "127.0.0.1"
+REDIS_HOST = taskredis
 REDIS_PORT = 6379
 REDIS_DB = 0
 
-MYSQL_HOST = "127.0.0.1"
+# MYSQL_HOST = "127.0.0.1"
+REDIS_HOST = taskdb
 MYSQL_PORT = 3306
 MYSQL_USER = "root"
 MYSQL_PWD = "123456"
