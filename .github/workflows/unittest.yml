@@ -17,5 +17,7 @@ jobs:
       run: docker images
     - name: Run Services
       run: docker-compose up -d
+    - name: Check Services
+      run: docker ps
     - name: Run Tests
       run: docker exec -it taskflow python3 -m pytest -v tests
