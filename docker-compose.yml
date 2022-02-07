@@ -7,7 +7,7 @@ services:
     ports:
       - "6379:6379"
   taskdb:
-    image: mysql:8.0
+    image: mysql:5.7
     container_name: task-db
     environment:
       TZ: "Asia/Shanghai"
