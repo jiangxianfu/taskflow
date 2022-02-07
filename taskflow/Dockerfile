@@ -1,5 +1,5 @@
 # base images
-FROM centos:8
+FROM centos:7
 # author
 LABEL author="jiangxf@trip.com"
 # set env
