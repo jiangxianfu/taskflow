@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: build-image
 
 on:
   push:
@@ -17,4 +17,4 @@ jobs:
     - name: Check Files
       run: ls -l
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build taskflow --file taskflow/Dockerfile --tag taskflow:$(date +%s)
