@@ -18,3 +18,5 @@ jobs:
       run: ls -l
     - name: Build the Docker image
       run: docker build taskflow --file taskflow/Dockerfile --tag taskflow:$(date +%s)
+    - name: Check Build Result
+      run: docker images
