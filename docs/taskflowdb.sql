@@ -56,8 +56,9 @@ CREATE TABLE `task_instance` (
   KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务实例表';
 
+/*
+-------------------init sample data------------------------------------------------
 
-#-------------------init sample data-------------------------------------------------
 INSERT INTO `task_form`(`title`,`description`,`task_type`,`task_name`,`args_json`,`status`,`creator`) 
 VALUES ('VMS001上线','测试流程','module','action_init_os',
 '{\"os\": \"centos 8.0\", \"mem_gb\": 24, \"cpu_num\": 8, \"disk_gb\": 100, \"machine_name\": \"VMS001\"}',
@@ -67,6 +68,7 @@ VALUES ('VMS001上线','测试流程','module','action_init_os',
 INSERT INTO `task_schedule`(`title`,`description`,`cron_sched`,`task_type`,`task_name`,`args_python_code`,`status`,`creator`) 
 VALUES ('VMS001上线','测试流程','module','action_init_os',
 'import datetime
+
 import requests
 import time
 def get_arguments(**kwargs):
@@ -77,3 +79,5 @@ def get_arguments(**kwargs):
     return data
 ',
 'standby','steven');
+
+*/
