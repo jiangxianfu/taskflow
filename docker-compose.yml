@@ -9,23 +9,14 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     ports:
       - "3306:3306"
-    networks:
-      - public
-      - private
   redis:
     image: redis:4.0
     container_name: redis
     ports:
       - "6379:6379"
-    networks:
-      - public
-      - private
   taskflow:
     image: taskflow:latest
     container_name: taskflow
-    networks:
-      - public
-      - private
     volumes:
       - .:/taskflow
     command: ["supervisord","-c","/taskflow/supervisord.conf"]
@@ -35,10 +26,4 @@ services:
     links:
       - db
       - redis
-
-networks:
-  public:
-    driver: bridge
-  private:
-    driver: bridge
 
