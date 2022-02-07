@@ -21,6 +21,7 @@ jobs:
       run: docker ps
     - name: Run Tests
       run: |
+        docker exec task-db bash -c "mysql -u root -p123456 < docs/taskflowdb.sql"
         docker exec task-service bash -c "ls -l"
         docker exec task-service bash -c "python3 --version"        
         docker exec task-service bash -c "python3 -m pytest -v tests"
