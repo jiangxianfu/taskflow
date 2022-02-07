@@ -23,6 +23,8 @@ jobs:
       run: |
         docker cp docs/taskflowdb.sql task-db:/tmp/taskflowdb.sql
         ps -ef
+        telnet 127.0.0.1 6379
+        telnet 127.0.0.1 3306
         docker exec task-db bash -c "mysql -u root -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
         docker exec task-service bash -c "ls -l"
         docker exec task-service bash -c "python3 --version"        
