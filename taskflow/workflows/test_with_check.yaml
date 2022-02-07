@@ -8,7 +8,7 @@ steps:
     on-failure: end_task
   check_task2:
     module: checker_zeusdatax
-    retry: 10
+    on-failure-retry: 10
     on-success: action_task3
   action_task3:
     module: delete_mongo

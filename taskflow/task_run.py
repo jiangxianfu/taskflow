@@ -125,18 +125,33 @@ def main(instance_id: int):
                 return
             cur_step = wf.steps[cur_step_name]
             if success:
+                #判断是否需要进行成功后暂停
+                success_pause = cur_step.get("on-success-pause",False)
+                if success_pause:
+                    update_source_task_status(taskflowdb,source_type,source_id,'pause')
+                    return
                 next_step_name = cur_step.get("on-success")
+                if not next_step_name:
+                    update_source_task_status(taskflowdb, source_type, source_id, result_status)
+                    return
             else:
-                taskflowdb.save_instance_status(parent_id, result_status, result_message=message)
+                retry_count = int(cur_step.get("on-failure-retry",0))
+                run_count = instance_data.get("retry_count",0)
+                if retry_count > 0 and run_count <= retry_count :
+                    redisdb.push_run_queue(instance_id)
+                    taskflowdb.save_instance_status(parent_id, result_status, retry_count=run_count + 1, result_message=message)
+                    return
+                taskflowdb.save_instance_status(parent_id, result_status, result_message=message)                
                 next_step_name = cur_step.get("on-failure")
-            if not next_step_name:
-                update_source_task_status(taskflowdb, source_type, source_id, result_status)
-                return
+                if not next_step_name:
+                    update_source_task_status(taskflowdb, source_type, source_id, result_status)
+                    return
             # 计算获取下一步骤的参数数据
             next_module_name = wf.steps[next_step_name].get("module")
             next_step_args_json = wf.get_next_step_parameters(taskflowdb, instance_id, parent_id, next_step_name, True)
             next_instance_id = taskflowdb.create_instance(next_step_name, source_id, source_type, parent_id,
                                                           "module", next_module_name, next_step_args_json, 'running')
+            
             redisdb.push_run_queue(next_instance_id)
         else:
             update_source_task_status(taskflowdb, source_type, source_id, result_status)

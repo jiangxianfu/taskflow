@@ -8,10 +8,11 @@ steps:
     on-failure: end_task
   task2:
     module: action_task2
-    retry: 10
-    on-success: action_task3
+    on-failure-retry: 10
+    on-success-pause: True
+    on-success: action_task3    
   action_task3:
     module: pause
     on-success: end_task
-  task:
+  end_task:
     module: notify

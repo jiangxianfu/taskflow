@@ -60,7 +60,7 @@ class TaskFlowDB:
 
     def get_sched_cron(self, limit=50):
         sql = """select id,cron_sched,task_type,task_name,args_python_code 
-                    from task_schedule where cron_enabled=1 and status<>'running' 
+                    from task_schedule where cron_enabled=1 and status not in ('running','pause')
                     and (trigger_next_time is null or trigger_next_time <=now()) limit %s""" % limit
         with self.conn.cursor() as cur:
             cur.execute(sql)
@@ -78,7 +78,7 @@ class TaskFlowDB:
                 cur.execute(1, sql, (status, sched_id))
 
     def save_instance_status(self, instance_id, status, worker_hostname=None, worker_pid=None,
-                             result_message=None, result_json=None):
+                             result_message=None, result_json=None,retry_count=None):
         """
         保存实例信息状态
         """
@@ -96,6 +96,9 @@ class TaskFlowDB:
         if result_json:
             sql = sql + ",result_json=%s"
             lst_params.append(result_json)
+        if retry_count:
+            sql = sql + ",retry_count=%s"
+            lst_params.append(retry_count)
         sql = sql + " where id =%s"
         lst_params.append(instance_id)
         with self.conn.cursor() as cur:

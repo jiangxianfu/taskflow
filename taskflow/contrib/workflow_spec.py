@@ -7,29 +7,6 @@ from .taskflowdb import TaskFlowDB
 from .workflow_context import WorkflowContext
 import json
 
-"""
-Workflow Model
-===============
-attribute    required   description
-------------------------------------------
-description  no         描述
-begin_step        yes        用于开始的task名称
-end_step          yes        用于接受的名称
-steps        yes        A dictionary of steps that defines the intent of this workflow.
-#######################################################################################
-Task Model
-===========
-attribute    required   description
---------------------------------------------
-module       yes        具体执行的模块名称(action_xxx,check_xxx)
-parameters   yes        模块对应的参数
-on-success   yes        执行成功后要执行的step_name
-on-failure   no         执行失败后要执行的step_name
-retry        no         如果失败后可以重试次数
-delay        no         延迟执行秒数
-"""
-
-
 class WorkflowSpec(object):
     """
     Workflow 规则类
