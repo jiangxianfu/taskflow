@@ -59,16 +59,17 @@ class WorkflowSpec(object):
         # 获取系统属性
         return self.__getattribute__(name)
 
-    def get_step_parameters(self, db: TaskFlowDB, instance_id: int, step_name: str, to_json: bool = False):
+    def get_next_step_parameters(self, db: TaskFlowDB, instance_id: int, parent_id:int, next_step_name: str, to_json: bool = False):
         step_item = self.steps[step_name]
         parameters = step_item.get("parameters")
         data = {}
-        context = WorkflowContext(db, instance_id)
+        context = WorkflowContext(db, instance_id, parent_id)
         arguments = {"this": self, "ctx": context}
         for param_name, param_eval in parameters.items():
             # 判断当前是否是表达式
             if param_eval.startswith("$"):
                 # 如果是转义符则转换
+                # 如果是表达式则使用eval进行计算得出
                 if param_eval.startswith("$$"):
                     param_value = param_eval[1:]
                 else:

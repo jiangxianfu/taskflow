@@ -134,7 +134,7 @@ def main(instance_id: int):
                 return
             # 计算获取下一步骤的参数数据
             next_module_name = wf.steps[next_step_name].get("module")
-            next_step_args_json = wf.get_step_parameters(taskflowdb, instance_id, next_step_name, True)
+            next_step_args_json = wf.get_next_step_parameters(taskflowdb, instance_id, parent_id, next_step_name, True)
             next_instance_id = taskflowdb.create_instance(next_step_name, source_id, source_type, parent_id,
                                                           "module", next_module_name, next_step_args_json, 'running')
             redisdb.push_run_queue(next_instance_id)

@@ -109,3 +109,25 @@ class TaskFlowDB:
             if data:
                 return data[0]
             return None
+    def get_instance_json(is_input,instance_id=0,parent_id=0,name=None):
+        paramlist=[]
+        sql = ""
+        if instance_id:
+            sql = sql + " and instance_id=%s"
+            paramlist.append(instance_id)
+        if parent_id:
+            sql = sql + " and parent_id=%s"
+            paramlist.append(parent_id)
+        if name:
+            sql = sql + " and name=%s"
+            paramlist.append(name)
+        if sql and paramlist:
+            sql = "select %s from task_instance where %s order by id desc limit 1;" % (
+                "args_json" if is_input else "result_json",sql[5:])
+            with self.conn.cursor() as cur:
+                cur.execute(sql,paramlist)
+                data = cur.fetchall()
+                if data:
+                    return data[0]
+        return None
+        

@@ -41,13 +41,14 @@ def main():
                 parent_id = 0
                 if "workflow" == item["task_type"]:
                     # 则先创建父任务
-                    parent_id = taskflowdb.create_instance(item["task_name"], source_id, source_type, parent_id,
+                    instance_id = taskflowdb.create_instance(item["task_name"], source_id, source_type, parent_id,
                                                            "workflow", item["task_name"], item["args_json"],
                                                            'running')
                     wf = WorkflowSpec(item["task_name"])
                     step_name = wf.begin_step
                     module_name = wf.steps[step_name].get("module")
-                    args_json = wf.get_step_parameters(taskflowdb,parent_id, step_name, True)
+                    args_json = wf.get_next_step_parameters(taskflowdb, instance_id, parent_id, step_name, True)
+                    parent_id = instance_id
                 elif "module" == item["task_type"]:
                     module_name = item["task_name"]
                     step_name = module_name
