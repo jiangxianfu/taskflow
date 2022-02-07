@@ -13,12 +13,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir -p /taskflow /var/log/supervisor /var/log/taskflow
 # set work dir
 WORKDIR /taskflow
-
-# set mirrors
-RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
-RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
-COPY pip.conf /etc/pip.conf
-
 # install system packages
 RUN yum install -y python3 git telnet && yum clean all
 # install pip packages
