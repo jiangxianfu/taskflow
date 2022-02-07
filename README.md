@@ -90,8 +90,6 @@
 单元测试使用的是pytest:
 
 ```
-cd taskflow
-
 python -m pytest -v tests
 
 ```

@@ -25,7 +25,7 @@ def main(module_name):
         inner_kwargs = {}
         # init sys empty instance
         if inner_fun_args.varkw:
-            inner_kwargs["sys_taskflow_instance"] = {}
+            inner_kwargs["sys_instance"] = {}
         try:
             ret = inner_func(**inner_kwargs)
             print("module return data:", ret)
