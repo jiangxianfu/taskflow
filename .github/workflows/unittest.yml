@@ -21,6 +21,6 @@ jobs:
       run: docker ps
     - name: Run Tests
       run: |
-        docker exec task-service -t python3
-        docker exec task-service -t ls -l
+        docker exec task-service python3 --version
+        docker exec task-service ls -l
         docker exec task-service python3 -m pytest -v tests
