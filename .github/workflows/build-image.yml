@@ -13,13 +13,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: setup buildx
-        uses: docker/setup-buildx-action@v1.6.0
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
         with:
           install: true
-      - name: check file
-        run: |
-          pwd
-          ls -l
-      - name: build
-        run: docker build -f /home/runner/work/smarttaskflow/smarttaskflow/taskflow/Dockerfile /home/runner/work/smarttaskflow/smarttaskflow/taskflow
+      - name: Check Files
+        run: ls -l
+      - name: Build Image
+        run: docker build .
