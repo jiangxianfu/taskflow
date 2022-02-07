@@ -25,7 +25,7 @@ CREATE TABLE `task_schedule` (
   `args_python_code` text NOT NULL COMMENT '表单参数python脚本(def get_arguments(**kwargs))',
   `trigger_last_time` datetime DEFAULT NULL COMMENT '上次运行时间',
   `trigger_next_time` datetime DEFAULT NULL COMMENT '下次运行时间',
-  `status` varchar(15) NOT NULL COMMENT 'standby---待运行，running----运行中,success----成功，failure----失败',
+  `status` varchar(15) NOT NULL COMMENT 'standby---待运行，pause----暂停中,running----运行中,success----成功，failure----失败',
   `creator` varchar(128) NOT NULL COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
