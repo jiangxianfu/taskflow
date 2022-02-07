@@ -17,8 +17,6 @@ services:
   taskservice:
     image: taskflow:latest
     container_name: task-service
-    environment:
-      DOCKER_HOST: ${HOSTNAME}
     volumes:
       - .:/taskflow
       - ./supervisord.conf:/etc/supervisord.conf
