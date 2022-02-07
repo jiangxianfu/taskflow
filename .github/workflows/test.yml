@@ -21,8 +21,8 @@ jobs:
       run: docker ps
     - name: Run Tests
       run: |
-        echo 'wait mysqld...'
-        sleep 30s
+        echo 'wait 15s for mysqld'
+        sleep 15s
         docker cp docs/taskflowdb.sql db:/tmp/taskflowdb.sql
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
         docker exec taskflow bash -c "ls -la"
