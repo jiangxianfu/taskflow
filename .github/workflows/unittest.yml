@@ -24,7 +24,7 @@ jobs:
         docker cp docs/taskflowdb.sql db:/tmp/taskflowdb.sql
         docker exec db bash -c "cat /etc/mysql/my.cnf"
         docker exec db bash -c "ls -la /var/run/mysqld"
-        docker exec taskflow bash -c "python3 -m pytest -v tests/test_docker.py -s"
+        docker logs db
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
         docker exec taskflow bash -c "ls -la"
         docker exec taskflow bash -c "python3 --version"        
