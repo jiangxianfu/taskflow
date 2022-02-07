@@ -79,12 +79,12 @@
 
 运行流程图：
 
-![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/architecture.png)
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/architecture.png)
 
 
 运行模块的关键程序instance表数据更新逻辑:
 
-![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/task_run_flow.png)
+![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/task_run_flow.png)
 
 
 单元测试使用的是pytest:
