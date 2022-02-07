@@ -11,7 +11,7 @@ CREATE TABLE `task_form` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='表单任务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='表单任务表';
 
 
 CREATE TABLE `task_schedule` (
@@ -30,7 +30,7 @@ CREATE TABLE `task_schedule` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='调度任务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='调度任务表';
 
 CREATE TABLE `task_instance` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -50,6 +50,26 @@ CREATE TABLE `task_instance` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='任务实例表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务实例表';
 
 
+#-------------------init sample data-------------------------------------------------
+INSERT INTO `task_form`(`title`,`description`,`task_type`,`task_name`,`args_json`,`status`,`creator`) 
+VALUES ('VMS001上线','测试流程','module','action_init_os',
+'{\"os\": \"centos 8.0\", \"mem_gb\": 24, \"cpu_num\": 8, \"disk_gb\": 100, \"machine_name\": \"VMS001\"}',
+'standby','steven');
+
+
+INSERT INTO `task_schedule`(`title`,`description`,`cron_sched`,`task_type`,`task_name`,`args_python_code`,`status`,`creator`) 
+VALUES ('VMS001上线','测试流程','module','action_init_os',
+'import datetime
+import requests
+import time
+def get_arguments(**kwargs):
+    data={}
+    data["start_time"]=int((time.time()-100000)*1000)
+    data["end_time"]=int(time.time()*1000)
+    data["data"]="ok"
+    return data
+',
+'standby','steven');
