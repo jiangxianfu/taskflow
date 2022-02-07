@@ -4,6 +4,7 @@ import unittest
 
 from contrib.workflow_spec import WorkflowSpec
 from contrib.workflow_context import WorkflowContext
+from contrib.taskflowdb import TaskFlowDB
 
 
 class TestWorkflowSpec(unittest.TestCase):
@@ -22,7 +23,8 @@ class TestWorkflowSpec(unittest.TestCase):
     def test_eval(self):
         wf = WorkflowSpec("test_simple")
         print("===========================")
-        context = WorkflowContext(None, 1)
+        taskflowdb = TaskFlowDB()
+        context = WorkflowContext(taskflowdb, 1, 0)
         for name, step in wf.steps.items():
             print("step_name:", name)
             parameters = step.get("parameters")
