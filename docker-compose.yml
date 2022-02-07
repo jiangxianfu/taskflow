@@ -26,8 +26,8 @@ services:
     volumes:
       - .:/taskflow
       - taskflow-volume:/var/log/taskflow
-      - ./supervisord.ini:/etc/supervisord.d/taskflow.ini
-    command: [ "supervisord" ]
+      - ./supervisord.conf:/etc/supervisord.conf
+    command: ["supervisord"]
     depends_on:
       - taskredis
       - taskdb
