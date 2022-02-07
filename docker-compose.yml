@@ -9,6 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     ports:
       - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
   redis:
     image: redis:4.0
     container_name: redis
