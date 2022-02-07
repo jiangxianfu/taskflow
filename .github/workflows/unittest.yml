@@ -23,7 +23,6 @@ jobs:
       run: |
         docker cp docs/taskflowdb.sql task-db:/tmp/taskflowdb.sql
         ps -ef
-        mysql -uroot -p123456 -e "show databases;"
         telnet 127.0.0.1 3306
         docker exec task-db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
         docker exec task-service bash -c "ls -l"
