@@ -20,4 +20,4 @@ jobs:
     - name: Check Services
       run: docker ps
     - name: Run Tests
-      run: docker exec -it taskflow python3 -m pytest -v tests
+      run: docker exec -it task-service python3 -m pytest -v tests

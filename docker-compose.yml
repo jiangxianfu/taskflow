@@ -18,9 +18,9 @@ services:
       - mysql-volume:/var/lib/mysql
     ports:
       - "3306:3306"
-  taskflow:
+  taskservice:
     image: taskflow:latest
-    container_name: task-master
+    container_name: task-service
     environment:
       DOCKER_HOST: ${HOSTNAME}
     volumes:
