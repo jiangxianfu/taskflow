@@ -22,4 +22,4 @@ jobs:
           pwd
           ls -l
       - name: build
-        run: docker build -f taskflow/Dockerfile taskflow
+        run: docker build -f ./taskflow/Dockerfile taskflow
