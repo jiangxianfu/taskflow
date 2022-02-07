@@ -13,13 +13,13 @@ services:
     container_name: task-db
     environment:
       TZ: "Asia/Shanghai"
-      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_ROOT_PASSWORD: 123456
     volumes:
       - mysql-volume:/var/lib/mysql
     ports:
       - "3306:3306"
   taskflow:
-    image: jiangxianfu/taskflow:latest
+    image: taskflow:latest
     container_name: task-master
     environment:
       DOCKER_HOST: ${HOSTNAME}

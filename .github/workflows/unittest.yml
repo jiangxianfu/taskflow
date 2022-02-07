@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build:
+  unittest:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -15,3 +15,7 @@ jobs:
       run: docker build taskflow --file Dockerfile --tag taskflow:latest
     - name: Check Build Result
       run: docker images
+    - name: Run Services
+      run: docker-compose up -d
+    - name: Run Tests
+      run: docker exec -it taskflow python3 -m pytest -v tests
