@@ -1,4 +1,4 @@
-name: build-image
+name: unittest
 on:
   push:
     branches: [ master ]
@@ -12,7 +12,7 @@ jobs:
     - name: Check Files
       run: ls -l
     - name: Build the Docker image
-      run: docker build taskflow --file Dockerfile --tag taskflow:latest
+      run: docker build --tag taskflow:latest .
     - name: Check Build Result
       run: docker images
     - name: Run Services
