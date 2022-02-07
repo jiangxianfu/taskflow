@@ -11,13 +11,14 @@ class TestTaskFlowDB(unittest.TestCase):
         with self.db.conn.cursor() as cur:
             cur.execute("select 'hello' as n")
             version = cur.fetchall()
-        print('ssssssssssssss', version[0]['n'])
+        print('dbhelper', version[0]['n'])
         assert 'hello' == version[0]['n']
 
     def test_tables(self):
         with self.db.conn.cursor() as cur:
             cur.execute("show tables")
             data = cur.fetchall()
+            print("tables",data)
             assert len(data) > 0
 
     def test_taskflowdb(self):
