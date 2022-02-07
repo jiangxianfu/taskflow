@@ -12,6 +12,6 @@ jobs:
     - name: Check Files
       run: ls -l
     - name: Build the Docker image
-      run: docker build taskflow --file taskflow/Dockerfile --tag taskflow:latest
+      run: docker build taskflow --file Dockerfile --tag taskflow:latest
     - name: Check Build Result
       run: docker images
