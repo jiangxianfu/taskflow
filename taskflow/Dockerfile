@@ -1,7 +1,7 @@
 # base images
 FROM centos:8
 # author
-LABEL author="jiangxf@ctrip.com"
+LABEL author="jiangxf@trip.com"
 # set env
 ENV LANG=en_US.UTF-8
 ENV PYTHONIOENCODING=utf8
