@@ -22,7 +22,7 @@ jobs:
     - name: Run Tests
       run: |
         docker cp docs/taskflowdb.sql db:/tmp/taskflowdb.sql
-        docker logs --tail=10000 db
+        docker logs db
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
         docker exec taskflow bash -c "ls -la"
         docker exec taskflow bash -c "python3 --version"        
