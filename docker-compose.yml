@@ -22,6 +22,8 @@ services:
   taskflow:
     image: taskflow:latest
     container_name: taskflow
+    ports:
+      - "8000:8000"
     volumes:
       - .:/taskflow
       - taskflow-log-volume:/var/log/taskflow
