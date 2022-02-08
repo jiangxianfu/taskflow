@@ -43,17 +43,20 @@ class WorkflowSpec(object):
         context = WorkflowContext(db, instance_id, parent_id)
         arguments = {"this": self, "ctx": context}
         for param_name, param_eval in parameters.items():
-            # 判断当前是否是表达式
-            if param_eval.startswith("$"):
-                # 如果是转义符则转换
-                # 如果是表达式则使用eval进行计算得出
-                if param_eval.startswith("$$"):
-                    param_value = param_eval[1:]
-                else:
-                    param_value = eval(param_eval[1:], arguments)
-            else:
-                param_value = param_eval
-            data[param_name] = param_value
+            data[param_name] = self.get_expr_value(param_eval)
         if to_json:
             data = json.dumps(data, ensure_ascii=False, cls=CustomJSONEncoder)
         return data
+    
+    def get_expr_value(self,expr):
+        # 判断当前是否是表达式
+        if expr.startswith("$"):
+            # 如果是转义符则转换
+            # 如果是表达式则使用eval进行计算得出
+            if expr.startswith("$$"):
+                result = expr[1:]
+            else:
+                result = eval(expr[1:], arguments)
+        else:
+            result = expr
+        return result

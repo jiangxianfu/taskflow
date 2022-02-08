@@ -97,11 +97,16 @@ def main(instance_id: int):
         redisdb = RedisDB()
         if str(module_name).startswith("check_"):
             if run_result is None:
-                # 这里需要出来下check的功能
+                check_interval = inner_func_kwargs.get("check_interval",300)
+                check_maxcount = inner_func_kwargs.get("check_maxcount",0)
                 data = redisdb.get_check_hash(instance_id)
-                times = int(data) if data else 0
-                redisdb.set_check_hash(instance_id, times + 1)
-                return
+                times = data.get("times",0)
+                # 这里需要出来下check的功能
+                if check_maxcount and times > check_maxcount:
+                    redisdb.del_checkhash(instance_id)
+                else:
+                    redisdb.set_check_hash(instance_id, times + 1,check_interval)
+                    return
             else:
                 redisdb.del_check_hash(instance_id)
         result_status = 'success' if success else 'failure'
@@ -130,7 +135,7 @@ def main(instance_id: int):
                 if success_pause:
                     update_source_task_status(taskflowdb,source_type,source_id,'pause')
                     return
-                next_step_name = cur_step.get("on-success")
+                next_step_name = wf.get_expr_value(cur_step.get("on-success"))
                 if not next_step_name:
                     update_source_task_status(taskflowdb, source_type, source_id, result_status)
                     return
@@ -142,7 +147,7 @@ def main(instance_id: int):
                     taskflowdb.save_instance_status(parent_id, result_status, retry_count=run_count + 1, result_message=message)
                     return
                 taskflowdb.save_instance_status(parent_id, result_status, result_message=message)                
-                next_step_name = cur_step.get("on-failure")
+                next_step_name = wf.get_expr_value(cur_step.get("on-failure"))
                 if not next_step_name:
                     update_source_task_status(taskflowdb, source_type, source_id, result_status)
                     return

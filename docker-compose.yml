@@ -10,16 +10,21 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data-volume:/var/lib/mysql
   redis:
     image: redis:4.0
     container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data-volume:/data
   taskflow:
     image: taskflow:latest
     container_name: taskflow
     volumes:
       - .:/taskflow
+      - taskflow-log-volume:/var/log/taskflow
     command: ["supervisord","-c","/taskflow/supervisord.conf"]
     depends_on:
       - db
@@ -27,4 +32,7 @@ services:
     links:
       - db
       - redis
-
+volumes:
+  redis-data-volume:
+  mysql-data-volume:
+  taskflow-log-volume:

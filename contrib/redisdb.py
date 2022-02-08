@@ -23,12 +23,19 @@ class RedisDB(object):
     def push_run_queue(self, instance_id):
         self.conn.lpush("taskflow:runqueue", instance_id)
 
-    def set_check_hash(self, instance_id, times):
-        self.conn.hset("taskflow:checkhash", instance_id, times)
+    def set_check_hash(self, instance_id, times, interval):
+        value = "%s,%s" %(times,interval)
+        self.conn.hset("taskflow:checkhash", instance_id, value)
 
-    def get_check_hash(self, instance_id):
-        return self.conn.hget("taskflow:checkhash", instance_id)
-
+    def get_check_hash(self, instance_id) -> dict:
+        value = self.conn.hget("taskflow:checkhash", instance_id)
+        dict_data = None
+        if value:
+            arr = value.split(',')
+            if len(arr)==2:
+                dict_data["times"] = int(arr[0])
+                dict_data["interval"] = int(arr[1])
+        return dict_data
     def del_check_hash(self, instance_id):
         self.conn.hdel("taskflow:checkhash", instance_id)
 

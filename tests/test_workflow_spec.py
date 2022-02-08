@@ -19,6 +19,7 @@ class TestWorkflowSpec(unittest.TestCase):
             print(t)
             print(v)
             print(v.get("on-success"))
+            print(wf.get_expr_value(v.get("on-success")))
 
     def test_eval(self):
         wf = WorkflowSpec("test_simple")

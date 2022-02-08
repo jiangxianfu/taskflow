@@ -13,7 +13,7 @@ steps:
     parameters:
       aac: "sss"
       abc_iss: $(this.steps["action_task1"])
-    on-success: action_task3
+    on-success: $("action_task3" if this.description=="good" else "action_task1")
   action_task3:
     module: delete_mongo
     parameters:
