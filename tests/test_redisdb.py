@@ -22,6 +22,8 @@ class TestRedisDB(unittest.TestCase):
         data = self.db.get_check_queue(instance)
         assert int(data) == times
         time.sleep(10)
-        data = self.db.pop_check_queue()
+        data = self.db.fetch_check_queue()
         assert len(data) > 0
         print('test check queue data:',type(data[0]), data[0])
+        self.db.remove_check_queue(instance)
+        self.db.del_check(instance)

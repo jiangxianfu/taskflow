@@ -24,10 +24,11 @@ def main():
     logging.info("taskflow checker is running")
     redisdb = RedisDB()
     while True:
-        data = redisdb.pop_check_queue()
+        data = redisdb.fetch_check_queue()
         if data:
             for instance_id, score in data:
                 redisdb.push_run_queue(instance_id)
+                redisdb.remove_check_queue(instance_id)
                 time.sleep(3)
         else:
             time.sleep(300)

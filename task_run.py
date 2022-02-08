@@ -102,12 +102,12 @@ def main(instance_id: int):
                 times = redisdb.get_check_queue(instance_id)
                 # 这里需要出来下check的功能
                 if check_maxcount and times > check_maxcount:
-                    redisdb.del_check_queue(instance_id)
+                    redisdb.del_check(instance_id)
                 else:
                     redisdb.set_check_queue(instance_id, times + 1, check_interval)
                     return
             else:
-                redisdb.del_check_queue(instance_id)
+                redisdb.del_check(instance_id)
         result_status = 'success' if success else 'failure'
         # 重新开启db资源
         taskflowdb = TaskFlowDB()
