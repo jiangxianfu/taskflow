@@ -41,6 +41,6 @@ class RedisDB(object):
         self.conn.zrem("taskflow:check:sorted_set", str(instance_id))
         self.conn.delete("taskflow:check:instances:%s" % instance_id)
 
-    def pop_check_queue(self, limit=50):
+    def pop_check_queue(self):
         cur_time = int(time.time())
-        return self.conn.zrangebyscore("taskflow:check:sorted_set", min=0, max=cur_time, num=limit)
+        return self.conn.zremrangebyscore("taskflow:check:sorted_set", min=0, max=cur_time)
