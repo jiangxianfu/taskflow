@@ -24,13 +24,13 @@ def main():
     logging.info("taskflow checker is running")
     redisdb = RedisDB()
     while True:
-        data = redisdb.get_all_check_hash()
-        if len(data) == 0:
+        data = redisdb.pop_check_queue()
+        if data:
+            for instance_id, score in data:
+                redisdb.push_run_queue(instance_id)
+                time.sleep(3)
+        else:
             time.sleep(300)
-            continue
-        for instance_id, times in data.items():
-            redisdb.push_run_queue(instance_id)
-            time.sleep(3)
 
 
 if __name__ == '__main__':

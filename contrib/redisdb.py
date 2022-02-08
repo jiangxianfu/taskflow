@@ -2,6 +2,7 @@
 
 import redis
 from . import settings
+import time
 
 
 class RedisDB(object):
@@ -20,27 +21,25 @@ class RedisDB(object):
             self.conn.close()
             self.conn = None
 
+    def pop_run_queue(self):
+        return self.conn.rpop("taskflow:runqueue")
+
     def push_run_queue(self, instance_id):
         self.conn.lpush("taskflow:runqueue", instance_id)
 
-    def set_check_hash(self, instance_id, times, interval):
-        value = "%s,%s" %(times,interval)
-        self.conn.hset("taskflow:checkhash", instance_id, value)
+    def set_check_queue(self, instance_id, times, interval):
+        next_time = int(time.time()) + int(interval)
+        self.conn.set("taskflow:check:instances:%s" % instance_id, times)
+        self.conn.zadd("taskflow:check:sorted_set", {str(instance_id): next_time, })
 
-    def get_check_hash(self, instance_id) -> dict:
-        value = self.conn.hget("taskflow:checkhash", instance_id)
-        dict_data = None
-        if value:
-            arr = value.split(',')
-            if len(arr)==2:
-                dict_data["times"] = int(arr[0])
-                dict_data["interval"] = int(arr[1])
-        return dict_data
-    def del_check_hash(self, instance_id):
-        self.conn.hdel("taskflow:checkhash", instance_id)
+    def get_check_queue(self, instance_id):
+        times = self.conn.get("taskflow:check:instances:%s" % instance_id)
+        return int(times) if times else 0
 
-    def get_all_check_hash(self):
-        return self.conn.hgetall("taskflow:checkhash")
+    def del_check_queue(self, instance_id):
+        self.conn.zrem("taskflow:check:sorted_set", str(instance_id))
+        self.conn.delete("taskflow:check:instances:%s" % instance_id)
 
-    def pop_run_queue(self):
-        return self.conn.rpop("taskflow:runqueue")
+    def pop_check_queue(self, limit=50):
+        cur_time = int(time.time())
+        return self.conn.zrangebyscore("taskflow:check:sorted_set", min=0, max=cur_time, num=limit)
