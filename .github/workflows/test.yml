@@ -18,13 +18,21 @@ jobs:
     - name: Run Services
       run: docker-compose up -d
     - name: Check Services
-      run: docker ps
-    - name: Run Tests
       run: |
-        echo 'wait 15s for mysqld'
+        echo "wait 15s for mysqld"
         sleep 15s
+        docker ps
+    - name: Init Data
+      run: |
         docker cp docs/taskflowdb.sql db:/tmp/taskflowdb.sql
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
+    - name: Run Tests
+      run: |
+        echo "check directory"
         docker exec taskflow bash -c "ls -la"
+        echo "check python version"
         docker exec taskflow bash -c "python3 --version"
+        echo "check supervisor status"
+        docker exec taskflow bash -c "supervisorctl status"
+        echo "start tests"
         docker exec taskflow bash -c "python3 -m pytest -v tests -s"
