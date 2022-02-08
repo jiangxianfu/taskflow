@@ -17,7 +17,7 @@ jobs:
       run: docker images
     - name: Run Services
       run: docker-compose up -d
-    - name: Check Services
+    - name: Check Docker Services
       run: |
         sleep 30s
         docker ps
@@ -26,7 +26,7 @@ jobs:
         docker cp docs/taskflowdb.sql db:/tmp/taskflowdb.sql
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD -Dtaskflowdb -e 'show tables'"
-    - name: Restart Services
+    - name: Check Taskflow Services
       run: |
         sleep 10s
         docker exec taskflow bash -c "supervisorctl status"
