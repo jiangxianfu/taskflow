@@ -26,6 +26,7 @@ jobs:
       run: |
         docker cp docs/taskflowdb.sql db:/tmp/taskflowdb.sql
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD < /tmp/taskflowdb.sql"
+        docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD -Dtaskflowdb -e 'show tables'"
     - name: Run Tests
       run: |
         echo "check directory"
