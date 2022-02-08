@@ -24,4 +24,4 @@ class TestRedisDB(unittest.TestCase):
         time.sleep(10)
         data = self.db.pop_check_queue(10)
         assert len(data) > 0
-        print(type(data[0]), data[0])
+        print('test check queue data:',type(data[0]), data[0])
