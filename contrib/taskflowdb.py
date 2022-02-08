@@ -79,7 +79,7 @@ class TaskFlowDB:
                 cur.execute(1, sql, (status, sched_id))
 
     def save_instance_status(self, instance_id, status, worker_hostname=None, worker_pid=None,
-                             result_message=None, result_json=None,retry_count=None):
+                             result_message=None, result_json=None, retry_count=None):
         """
         保存实例信息状态
         """
@@ -113,8 +113,9 @@ class TaskFlowDB:
             if data:
                 return data[0]
             return None
-    def get_instance_json(is_input,instance_id=0,parent_id=0,name=None):
-        paramlist=[]
+
+    def get_instance_json(self, is_input, instance_id=0, parent_id=0, name=None):
+        paramlist = []
         sql = ""
         if instance_id:
             sql = sql + " and instance_id=%s"
@@ -127,11 +128,10 @@ class TaskFlowDB:
             paramlist.append(name)
         if sql and paramlist:
             sql = "select %s from task_instance where %s order by id desc limit 1;" % (
-                "args_json" if is_input else "result_json",sql[5:])
+                "args_json" if is_input else "result_json", sql[5:])
             with self.conn.cursor() as cur:
-                cur.execute(sql,paramlist)
+                cur.execute(sql, paramlist)
                 data = cur.fetchall()
                 if data:
                     return data[0]
         return None
-        
