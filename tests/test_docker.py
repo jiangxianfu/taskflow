@@ -6,6 +6,7 @@ import unittest
 
 import redis
 import pymysql
+from pymysql.cursors import DictCursor
 from contrib import settings
 
 
@@ -13,7 +14,7 @@ class TestDocker(unittest.TestCase):
     def test_database(self):
         mysqldb = pymysql.connect(host=settings.MYSQL_HOST, port=settings.MYSQL_PORT, user=settings.MYSQL_USER,
                                   password=settings.MYSQL_PWD, database=settings.MYSQL_DB, ssl=None,
-                                  autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+                                  autocommit=True, cursorclass=DictCursor)
         mysqldb_cursor = mysqldb.cursor()
         mysqldb_cursor.execute("show tables;")
         data = mysqldb_cursor.fetchall()

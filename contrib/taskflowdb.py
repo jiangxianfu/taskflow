@@ -8,6 +8,7 @@ description: 操作数据的DB
 
 from . import settings
 import pymysql
+from pymysql.cursors import DictCursor
 
 
 class TaskFlowDB:
@@ -23,7 +24,7 @@ class TaskFlowDB:
         database = settings.MYSQL_DB
         self.conn = pymysql.connect(host=host, port=port, user=user, password=password,
                                     database=database, ssl=None,
-                                    autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+                                    autocommit=True, cursorclass=DictCursor)
 
     def __del__(self):
         self.close()
