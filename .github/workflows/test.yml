@@ -28,7 +28,6 @@ jobs:
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD -Dtaskflowdb -e 'show tables'"
     - name: Restart Services
       run: |
-        docker exec taskflow bash -c "supervisorctl restart all"
         sleep 10s
         docker exec taskflow bash -c "supervisorctl status"
     - name: Run Tests
