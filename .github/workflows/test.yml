@@ -15,7 +15,7 @@ jobs:
       run: docker build --tag taskflow:latest .
     - name: Show Images
       run: docker images
-    - name: Run Services
+    - name: Run Docker Compose
       run: docker-compose up -d
     - name: Check Docker Services
       run: |
