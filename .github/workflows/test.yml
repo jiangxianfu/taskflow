@@ -29,6 +29,8 @@ jobs:
         docker exec db bash -c "mysql -uroot -p\$MYSQL_ROOT_PASSWORD -Dtaskflowdb -e 'show tables'"
     - name: Run Tests
       run: |
+        docker exec taskflow bash -c "cat /var/log/supervisor/task_producer_err.log"
+        docker exec taskflow bash -c "cat /var/log/supervisor/task_producer.log"
         echo "check directory"
         docker exec taskflow bash -c "ls -la"
         echo "check python version"
