@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Check Files
+    - name: Show Files
       run: ls -l
-    - name: Build the Docker image
+    - name: Build Image
       run: docker build --tag taskflow:latest .
-    - name: Check Build Result
+    - name: Show Images
       run: docker images
     - name: Run Services
       run: docker-compose up -d
@@ -31,10 +31,4 @@ jobs:
         sleep 10s
         docker exec taskflow bash -c "supervisorctl status"
     - name: Run Tests
-      run: |
-        echo "check directory"
-        docker exec taskflow bash -c "ls -la"
-        echo "check python version"
-        docker exec taskflow bash -c "python3 --version"
-        echo "start tests"
-        docker exec taskflow bash -c "python3 -m pytest -v tests -s"
+      run: docker exec taskflow bash -c "python3 -m pytest -v tests -s"
