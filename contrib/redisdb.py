@@ -28,12 +28,12 @@ class RedisDB(object):
     def push_run_queue(self, instance_id):
         self.conn.lpush("taskflow:runqueue", instance_id)
 
-    def set_check_queue(self, instance_id, times, interval):
+    def set_check(self, instance_id, times, interval):
         next_time = int(time.time()) + int(interval)
         self.conn.set("taskflow:check:instances:%s" % instance_id, times)
         self.conn.zadd("taskflow:check:sorted_set", {str(instance_id): next_time, })
 
-    def get_check_queue(self, instance_id):
+    def get_check_times(self, instance_id):
         times = self.conn.get("taskflow:check:instances:%s" % instance_id)
         return int(times) if times else 0
 
@@ -41,7 +41,7 @@ class RedisDB(object):
         self.conn.zrem("taskflow:check:sorted_set", str(instance_id))
         self.conn.delete("taskflow:check:instances:%s" % instance_id)
     
-    def remove_check_queue(self, instance_id):
+    def del_check_queue(self, instance_id):
         self.conn.zrem("taskflow:check:sorted_set", str(instance_id))
 
     def fetch_check_queue(self, limit=50):

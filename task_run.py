@@ -99,12 +99,12 @@ def main(instance_id: int):
             if run_result is None:
                 check_interval = inner_func_kwargs.get("check_interval", 300)
                 check_maxcount = inner_func_kwargs.get("check_maxcount", 0)
-                times = redisdb.get_check_queue(instance_id)
+                times = redisdb.get_check_times(instance_id)
                 # 这里需要出来下check的功能
                 if check_maxcount and times > check_maxcount:
                     redisdb.del_check(instance_id)
                 else:
-                    redisdb.set_check_queue(instance_id, times + 1, check_interval)
+                    redisdb.set_check(instance_id, times + 1, check_interval)
                     return
             else:
                 redisdb.del_check(instance_id)
