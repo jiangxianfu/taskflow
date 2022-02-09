@@ -33,4 +33,5 @@ check: 允许使用4种返回值：
 
 **特殊参数**:
   check_interval: 用于定义check的重试周期(int,默认:300秒)
+  
   check_maxcount: 用于定义check的最大次数(int,默认0:不限制)
