@@ -9,7 +9,7 @@
 
 action: 允许使用4中类型(以下)
 
-> 情况一：没有返回 (**这种情况算执行成功**)
+> 情况一：没有返回 **这种情况算执行成功**
 
 > 情况二：bool类型
 
@@ -34,6 +34,6 @@ check: 允许使用4种返回值：
 
 **特殊参数**:
 
-  check_interval: 用于定义check的重试周期(int,默认:300秒)
+check_interval: 用于定义check的重试周期(int,默认:300秒)
   
-  check_maxcount: 用于定义check的最大次数(int,默认0:不限制)
+check_maxcount: 用于定义check的最大次数(int,默认0:不限制)
