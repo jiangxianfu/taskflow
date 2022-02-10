@@ -27,7 +27,7 @@ class WorkflowSpec(object):
             raise ValueError("load workflow error")
         self.instance_id = instance_id
         self.parent_id = parent_id
-        self.db = db
+        self._db = db
 
     def get_meta_schema(self):
         return self._meta_schema
@@ -41,9 +41,9 @@ class WorkflowSpec(object):
 
     def get_root_argument(self):
         if self.parent_id > 0:
-            data = self.db.get_instance_json(True, instance_id=self.parent_id)
+            data = self._db.get_instance_json(True, instance_id=self.parent_id)
         else:
-            data = self.db.get_instance_json(True, instance_id=self.instance_id)
+            data = self._db.get_instance_json(True, instance_id=self.instance_id)
         if data:
             data = json.loads(data)
             return data
@@ -51,9 +51,9 @@ class WorkflowSpec(object):
 
     def get_step_argument(self, step_name):
         if self.parent_id > 0:
-            data = self.db.get_instance_json(True, parent_id=self.parent_id, name=step_name)
+            data = self._db.get_instance_json(True, parent_id=self.parent_id, name=step_name)
         else:
-            data = self.db.get_instance_json(True, instance_id=self.instance_id, name=step_name)
+            data = self._db.get_instance_json(True, instance_id=self.instance_id, name=step_name)
         if data:
             data = json.loads(data)
             return data
@@ -61,9 +61,9 @@ class WorkflowSpec(object):
 
     def get_step_result(self, step_name):
         if self.parent_id > 0:
-            data = self.db.get_instance_json(False, parent_id=self.parent_id, name=step_name)
+            data = self._db.get_instance_json(False, parent_id=self.parent_id, name=step_name)
         else:
-            data = self.db.get_instance_json(False, instance_id=self.instance_id, name=step_name)
+            data = self._db.get_instance_json(False, instance_id=self.instance_id, name=step_name)
         if data:
             data = json.loads(data)
             return data
