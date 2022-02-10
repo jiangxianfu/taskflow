@@ -52,6 +52,8 @@ class WorkflowSpec(object):
         return self._expr_value(expr)
 
     def _expr_value(self, expr):
+        if not expr:
+            return None
         arguments = {"this": self, "ctx": self.context}
         # 判断当前是否是表达式
         if expr.startswith("$"):
