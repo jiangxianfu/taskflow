@@ -29,7 +29,7 @@ class TestWorkflowSpec(unittest.TestCase):
         for name, step in wf.steps.items():
             print("step_name:", name)
             parameters = step.get("parameters")
-            wf.get_step_parameters()
+            wf.get_step_parameters(name)
             for param_name, param_value in parameters.items():
                 if param_value.startswith("$"):
                     if param_value.startswith("$$"):
