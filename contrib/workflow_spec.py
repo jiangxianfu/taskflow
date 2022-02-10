@@ -4,7 +4,6 @@ import yaml
 from .settings import BASE_DIR
 from .utils import CustomJSONEncoder
 from .taskflowdb import TaskFlowDB
-from .workflow_context import WorkflowContext
 import json
 
 
@@ -26,7 +25,9 @@ class WorkflowSpec(object):
             self._spec = yaml.safe_load(f)  # type: dict
         if not isinstance(self._spec, dict) and not self._spec:
             raise ValueError("load workflow error")
-        self.context = WorkflowContext(db, instance_id, parent_id)
+        self.instance_id = instance_id
+        self.parent_id = parent_id
+        self.db = db
 
     def get_meta_schema(self):
         return self._meta_schema
@@ -37,6 +38,36 @@ class WorkflowSpec(object):
             return self._spec.get(name)
         # 获取系统属性
         return self.__getattribute__(name)
+
+    def get_root_argument(self):
+        if self.parent_id > 0:
+            data = self.db.get_instance_json(True, instance_id=self.parent_id)
+        else:
+            data = self.db.get_instance_json(True, instance_id=self.instance_id)
+        if data:
+            data = json.loads(data)
+            return data
+        return {}
+
+    def get_step_argument(self, step_name):
+        if self.parent_id > 0:
+            data = self.db.get_instance_json(True, parent_id=self.parent_id, name=step_name)
+        else:
+            data = self.db.get_instance_json(True, instance_id=self.instance_id, name=step_name)
+        if data:
+            data = json.loads(data)
+            return data
+        return {}
+
+    def get_step_result(self, step_name):
+        if self.parent_id > 0:
+            data = self.db.get_instance_json(False, parent_id=self.parent_id, name=step_name)
+        else:
+            data = self.db.get_instance_json(False, instance_id=self.instance_id, name=step_name)
+        if data:
+            data = json.loads(data)
+            return data
+        return {}
 
     def get_next_step_parameters(self, next_step_name: str, to_json: bool = False):
         step_item = self.steps[next_step_name]
@@ -54,7 +85,7 @@ class WorkflowSpec(object):
     def _expr_value(self, expr):
         if not isinstance(expr, str):
             return expr
-        arguments = {"this": self, "ctx": self.context}
+        arguments = {"this": self}
         # 判断当前是否是表达式
         if expr.startswith("$"):
             # 如果是转义符则转换

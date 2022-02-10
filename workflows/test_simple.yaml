@@ -23,3 +23,6 @@ steps:
       input_step: $(this.steps["task2"].get("module"))
       input_str2_escape: $$sss
       input_security: $(__import__("os").getcwd())
+      input_step_data: $(this.get_root_argument())
+      input_step_data2: $(this.get_step_argument("test"))
+      input_step_data3: $(this.get_step_result("sss"))
