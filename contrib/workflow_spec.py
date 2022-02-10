@@ -7,6 +7,7 @@ from .taskflowdb import TaskFlowDB
 from .workflow_context import WorkflowContext
 import json
 
+
 class WorkflowSpec(object):
     """
     Workflow 规则类
@@ -18,13 +19,14 @@ class WorkflowSpec(object):
         "steps": {"type": "array", "required": True, "description": "workflow steps"}
     }
 
-    def __init__(self, name):
+    def __init__(self, name, db: TaskFlowDB, instance_id: int, parent_id: int):
         self.name = name
         self.filename = os.path.join(BASE_DIR, "workflows", "%s.yaml" % name)
         with open(self.filename, 'r', encoding='utf8') as f:
             self._spec = yaml.safe_load(f)  # type: dict
         if not isinstance(self._spec, dict) and not self._spec:
             raise ValueError("load workflow error")
+        self.context = WorkflowContext(db, instance_id, parent_id)
 
     def get_meta_schema(self):
         return self._meta_schema
@@ -36,19 +38,21 @@ class WorkflowSpec(object):
         # 获取系统属性
         return self.__getattribute__(name)
 
-    def get_next_step_parameters(self, db: TaskFlowDB, instance_id: int, parent_id:int, next_step_name: str, to_json: bool = False):
-        step_item = self.steps[step_name]
+    def get_next_step_parameters(self, next_step_name: str, to_json: bool = False):
+        step_item = self.steps[next_step_name]
         parameters = step_item.get("parameters")
         data = {}
-        context = WorkflowContext(db, instance_id, parent_id)
-        arguments = {"this": self, "ctx": context}
         for param_name, param_eval in parameters.items():
-            data[param_name] = self.get_expr_value(param_eval)
+            data[param_name] = self._expr_value(param_eval)
         if to_json:
             data = json.dumps(data, ensure_ascii=False, cls=CustomJSONEncoder)
         return data
-    
-    def get_expr_value(self,expr):
+
+    def get_next_step_name(self, expr):
+        return self._expr_value(expr)
+
+    def _expr_value(self, expr):
+        arguments = {"this": self, "ctx": self.context}
         # 判断当前是否是表达式
         if expr.startswith("$"):
             # 如果是转义符则转换

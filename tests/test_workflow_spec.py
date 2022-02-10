@@ -9,20 +9,23 @@ from contrib.taskflowdb import TaskFlowDB
 
 class TestWorkflowSpec(unittest.TestCase):
 
-    def no_test_read_yaml(self):
-        wf = WorkflowSpec("test_simple")
-        print('check workflow dir',dir(wf))
-        print('test workflow description:',wf.description)
-        print('test workflow steps:',wf.steps)
-        print('test workflow filename:',wf.filename)
+    def setUp(self) -> None:
+        self.db = TaskFlowDB()
+
+    def test_read_yaml(self):
+        wf = WorkflowSpec("test_simple", self.db, 1, 0)
+        print('check workflow dir', dir(wf))
+        print('test workflow description:', wf.description)
+        print('test workflow steps:', wf.steps)
+        print('test workflow filename:', wf.filename)
         for t, v in wf.steps.items():
-            print("step:",t)
-            print("step object:",v)
-            print("step-on-success:",v.get("on-success"))
-            print("step-on-success-eval:",wf.get_expr_value(v.get("on-success")))
+            print("step:", t)
+            print("step object:", v)
+            print("step-on-success:", v.get("on-success"))
+            print("step-on-success-eval:", wf.get_next_step_name(v.get("on-success")))
 
     def test_eval(self):
-        wf = WorkflowSpec("test_simple")
+        wf = WorkflowSpec("test_simple", self.db, 1, 0)
         print("===========================")
         taskflowdb = TaskFlowDB()
         context = WorkflowContext(taskflowdb, 1, 0)
