@@ -31,4 +31,4 @@ jobs:
         sleep 10s
         docker exec taskflow bash -c "supervisorctl status"
     - name: Run Tests
-      run: docker exec taskflow bash -c "python3 -m pytest -v tests -s"
+      run: docker exec taskflow bash -c "python3 -m unittest discover"

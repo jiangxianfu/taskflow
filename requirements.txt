@@ -6,4 +6,3 @@ requests
 PyMySQL
 PyYAML
 croniter
-pytest
