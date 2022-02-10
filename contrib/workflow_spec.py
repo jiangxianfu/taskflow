@@ -69,8 +69,8 @@ class WorkflowSpec(object):
             return data
         return {}
 
-    def get_next_step_parameters(self, next_step_name: str, to_json: bool = False):
-        step_item = self.steps[next_step_name]
+    def get_step_parameters(self, step_name: str, to_json: bool = False):
+        step_item = self.steps[step_name]
         parameters = step_item.get("parameters")
         data = {}
         for param_name, param_eval in parameters.items():
@@ -79,7 +79,7 @@ class WorkflowSpec(object):
             data = json.dumps(data, ensure_ascii=False, cls=CustomJSONEncoder)
         return data
 
-    def get_next_step_name(self, expr):
+    def get_step_name(self, expr):
         return self._expr_value(expr)
 
     def _expr_value(self, expr):

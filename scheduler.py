@@ -70,7 +70,7 @@ def main():
                     wf = WorkflowSpec(item["task_name"], taskflowdb, instance_id, parent_id)
                     step_name = wf.begin_step
                     module_name = wf.steps[wf.begin_step].get("module")
-                    args_json = wf.get_next_step_parameters(step_name, True)
+                    args_json = wf.get_step_parameters(step_name, True)
                     parent_id = instance_id
                 elif "module" == item["task_type"]:
                     module_name = item["task_name"]

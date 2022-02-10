@@ -134,7 +134,7 @@ def main(instance_id: int):
                 if success_pause:
                     update_source_task_status(taskflowdb, source_type, source_id, 'pause')
                     return
-                next_step_name = wf.get_next_step_name(cur_step.get("on-success"))
+                next_step_name = wf.get_step_name(cur_step.get("on-success"))
                 if not next_step_name:
                     update_source_task_status(taskflowdb, source_type, source_id, result_status)
                     return
@@ -147,13 +147,13 @@ def main(instance_id: int):
                                                     result_message=message)
                     return
                 taskflowdb.save_instance_status(parent_id, result_status, result_message=message)
-                next_step_name = wf.get_next_step_name(cur_step.get("on-failure"))
+                next_step_name = wf.get_step_name(cur_step.get("on-failure"))
                 if not next_step_name:
                     update_source_task_status(taskflowdb, source_type, source_id, result_status)
                     return
             # 计算获取下一步骤的参数数据
             next_module_name = wf.steps[next_step_name].get("module")
-            next_step_args_json = wf.get_next_step_parameters(next_step_name, True)
+            next_step_args_json = wf.get_step_parameters(next_step_name, True)
             next_instance_id = taskflowdb.create_instance(next_step_name, source_id, source_type, parent_id,
                                                           "module", next_module_name, next_step_args_json, 'running')
 
