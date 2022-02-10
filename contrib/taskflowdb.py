@@ -118,7 +118,7 @@ class TaskFlowDB:
         paramlist = []
         sql = ""
         if instance_id:
-            sql = sql + " and instance_id=%s"
+            sql = sql + " and id=%s"
             paramlist.append(instance_id)
         if parent_id:
             sql = sql + " and parent_id=%s"
