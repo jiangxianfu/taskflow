@@ -87,7 +87,7 @@
 ![image](https://github.com/jiangxianfu/smarttaskflow/blob/master/docs/task_run_flow.png)
 
 
-单元测试使用的是pytest:
+单元测试使用的是unittest:
 
 ```
 python -m unittest -v
