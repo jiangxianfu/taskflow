@@ -12,7 +12,7 @@ class TestRedisDB(unittest.TestCase):
         instance = 1
         self.db.push_run_queue(instance)
         pop_value = self.db.pop_run_queue()
-        assert int(pop_value) == instance
+        self.assertEqual(int(pop_value),instance)
 
     def test_check_queue(self):
         instance = 1
@@ -20,10 +20,10 @@ class TestRedisDB(unittest.TestCase):
         interval = 5
         self.db.set_check(instance, times, interval)
         data = self.db.get_check_times(instance)
-        assert int(data) == times
+        self.assertEqual(int(data),times)
         time.sleep(10)
         data = self.db.fetch_check_queue()
-        assert len(data) > 0
+        self.assertTrue(len(data)>0)
         print('test check queue data:',type(data[0]), data[0])
         self.db.del_check_queue(instance)
         self.db.del_check(instance)

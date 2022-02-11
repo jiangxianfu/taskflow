@@ -12,15 +12,15 @@ class TestTaskFlowDB(unittest.TestCase):
             cur.execute("select 'hello' as n")
             version = cur.fetchall()
         print('dbhelper hello:', version[0]['n'])
-        assert 'hello' == version[0]['n']
+        self.assertEqual('hello',version[0]['n'])
 
     def test_tables(self):
         with self.db.conn.cursor() as cur:
             cur.execute("show tables")
             data = cur.fetchall()
             print("db tables",data)
-            assert len(data) > 0
+            self.assertTrue(data)
 
     def test_taskflowdb(self):
         data = self.db.get_undo_taskforms()
-        assert type(data) is tuple
+        self.assertIsInstance(data,tuple)

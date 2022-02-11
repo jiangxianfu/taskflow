@@ -19,9 +19,11 @@ class TestDocker(unittest.TestCase):
         mysqldb_cursor.execute("show tables;")
         data = mysqldb_cursor.fetchall()
         print('db tables:',data)
+        self.assertTrue(data)
 
     def test_redis(self):
         redisdb = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
         redisdb.set("test_key", "123456", 60)
         data = redisdb.get("test_key")
         print('redis test_key data:',data)
+        self.assertEqual(data, b"123456")
