@@ -90,7 +90,7 @@
 单元测试使用的是pytest:
 
 ```
-python -m pytest -v tests
+python -m unittest -v
 
 ```
 
