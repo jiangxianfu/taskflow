@@ -124,7 +124,8 @@ def main(instance_id: int):
             workflow_name = parent_instance["task_name"]
             wf = WorkflowSpec(workflow_name, taskflowdb, instance_id, parent_id)
             cur_step_name = instance_data["name"]
-            if cur_step_name == wf.end_step:
+            end_step_name = wf.get_step_name(wf.end_step)
+            if cur_step_name == end_step_name:
                 update_source_task_status(taskflowdb, source_type, source_id, result_status)
                 return
             cur_step = wf.steps[cur_step_name]
