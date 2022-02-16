@@ -56,7 +56,7 @@ CREATE TABLE `task_instance` (
   KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务实例表';
 
-CREATE TABLE `task_log` (
+CREATE TABLE `task_instance_log` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `instance_id` int(11) NOT NULL,
    `level` varchar(45) NOT NULL DEFAULT 'info' COMMENT '告警级别:info,warning,error',
