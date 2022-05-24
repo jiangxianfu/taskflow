@@ -27,9 +27,14 @@ class WorkflowSpec(object):
             raise ValueError("load workflow error")
         self.instance_id = instance_id
         self.parent_id = parent_id
-        self._db = db
+        self.db = db
+        self.cache = {}
 
     def get_meta_schema(self):
+        """
+        获取元数据信息
+        :return: dict
+        """
         return self._meta_schema
 
     def __getattr__(self, name):
@@ -40,49 +45,84 @@ class WorkflowSpec(object):
         return self.__getattribute__(name)
 
     def get_root_argument(self):
+        """
+        获取流程初始化参数信息
+        :return: dict
+        """
+        cache_key = 'root_argument'
+        if cache_key in self.cache:
+            return self.cache[cache_key]
         if self.parent_id > 0:
-            data = self._db.get_instance_json(True, instance_id=self.parent_id)
+            data = self.db.get_instance_json(True, instance_id=self.parent_id)
         else:
-            data = self._db.get_instance_json(True, instance_id=self.instance_id)
+            data = self.db.get_instance_json(True, instance_id=self.instance_id)
         if data:
             data = json.loads(data)
+            self.cache[cache_key] = data
             return data
+        self.cache[cache_key] = {}
         return {}
 
     def get_step_argument(self, step_name):
+        """
+        获取步骤对应的输入值
+        :param step_name: str
+        :return: dict
+        """
+        cache_key = 'step_argument:%s' % step_name
+        if cache_key in self.cache:
+            return self.cache[cache_key]
         if self.parent_id > 0:
-            data = self._db.get_instance_json(True, parent_id=self.parent_id, name=step_name)
+            data = self.db.get_instance_json(True, parent_id=self.parent_id, name=step_name)
         else:
-            data = self._db.get_instance_json(True, instance_id=self.instance_id, name=step_name)
+            data = self.db.get_instance_json(True, instance_id=self.instance_id, name=step_name)
         if data:
             data = json.loads(data)
+            self.cache[cache_key] = data
             return data
+        self.cache[cache_key] = {}
         return {}
 
     def get_step_result(self, step_name):
+        """
+        获取步骤对应的输出值
+        :param step_name: str
+        :return: dict
+        """
+        cache_key = 'step_result:%s' % step_name
+        if cache_key in self.cache:
+            return self.cache[cache_key]
         if self.parent_id > 0:
-            data = self._db.get_instance_json(False, parent_id=self.parent_id, name=step_name)
+            data = self.db.get_instance_json(False, parent_id=self.parent_id, name=step_name)
         else:
-            data = self._db.get_instance_json(False, instance_id=self.instance_id, name=step_name)
+            data = self.db.get_instance_json(False, instance_id=self.instance_id, name=step_name)
         if data:
             data = json.loads(data)
+            self.cache[cache_key] = data
             return data
+        self.cache[cache_key] = {}
         return {}
 
     def get_step_parameters(self, step_name: str, to_json: bool = False):
+        """
+        获取步骤对应的参数值
+        :param step_name: str
+        :param to_json: bool
+        :return: dict or str
+        """
         step_item = self.steps[step_name]
         parameters = step_item.get("parameters")
         data = {}
         for param_name, param_eval in parameters.items():
-            data[param_name] = self._expr_value(param_eval)
+            data[param_name] = self.expr_value(param_eval)
         if to_json:
             data = json.dumps(data, ensure_ascii=False, cls=CustomJSONEncoder)
         return data
 
     def get_step_name(self, expr):
-        return self._expr_value(expr)
+        return self.expr_value(expr)
 
-    def _expr_value(self, expr):
+    def expr_value(self, expr):
         if not isinstance(expr, str):
             return expr
         arguments = {"this": self}
