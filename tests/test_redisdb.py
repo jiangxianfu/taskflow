@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 import unittest
-from contrib.redisdb import RedisDB
+from core.redisdb import RedisDB
 
 
 class TestRedisDB(unittest.TestCase):

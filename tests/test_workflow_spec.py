@@ -2,8 +2,8 @@
 
 import unittest
 
-from contrib.workflow_spec import WorkflowSpec
-from contrib.taskflowdb import TaskFlowDB
+from core.workflow_spec import WorkflowSpec
+from core.taskflowdb import TaskFlowDB
 
 
 class TestWorkflowSpec(unittest.TestCase):

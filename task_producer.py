@@ -15,9 +15,9 @@ description: 该方法主要是用于启动整个工作流程序
 
 import time
 import logging
-from contrib.redisdb import RedisDB
-from contrib.taskflowdb import TaskFlowDB
-from contrib.workflow_spec import WorkflowSpec
+from core.redisdb import RedisDB
+from core.taskflowdb import TaskFlowDB
+from core.workflow_spec import WorkflowSpec
 import sys
 import traceback
 

@@ -18,10 +18,10 @@ import sys
 import logging
 from croniter import croniter
 import datetime
-from contrib.taskflowdb import TaskFlowDB
-from contrib.redisdb import RedisDB
-from contrib.workflow_spec import WorkflowSpec
-from contrib.utils import CustomJSONEncoder
+from core.taskflowdb import TaskFlowDB
+from core.redisdb import RedisDB
+from core.workflow_spec import WorkflowSpec
+from core.utils import CustomJSONEncoder
 import json
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')

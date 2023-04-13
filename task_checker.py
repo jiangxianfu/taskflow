@@ -14,7 +14,7 @@ description: 该方法主要是用于启动整个工作流程序
 
 import time
 import logging
-from contrib.redisdb import RedisDB
+from core.redisdb import RedisDB
 import sys
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')

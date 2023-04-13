@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
-from contrib.taskflowdb import TaskFlowDB
+from core.taskflowdb import TaskFlowDB
 
 
 class TestTaskFlowDB(unittest.TestCase):

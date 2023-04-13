@@ -23,10 +23,10 @@ import getopt
 import logging
 import json
 import traceback
-from contrib.taskflowdb import TaskFlowDB
-from contrib.redisdb import RedisDB
-from contrib.utils import CustomJSONEncoder
-from contrib.workflow_spec import WorkflowSpec
+from core.taskflowdb import TaskFlowDB
+from core.redisdb import RedisDB
+from core.utils import CustomJSONEncoder
+from core.workflow_spec import WorkflowSpec
 import inspect
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')

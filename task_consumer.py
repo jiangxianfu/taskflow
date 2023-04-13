@@ -10,10 +10,10 @@ description: 该方法主要是用于启动整个工作流程序
 
 import time
 import subprocess
-from contrib.redisdb import RedisDB
-from contrib.taskflowdb import TaskFlowDB
+from core.redisdb import RedisDB
+from core.taskflowdb import TaskFlowDB
 import socket
-from contrib import settings
+from core import settings
 import logging
 import traceback
 import sys

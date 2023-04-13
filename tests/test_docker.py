@@ -7,7 +7,7 @@ import unittest
 import redis
 import pymysql
 from pymysql.cursors import DictCursor
-from contrib import settings
+from core import settings
 
 
 class TestDocker(unittest.TestCase):
