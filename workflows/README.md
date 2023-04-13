@@ -5,8 +5,8 @@
 | attribute   | required | description                                                           |
 |-------------|----------|-----------------------------------------------------------------------|
 | description | no       | 描述                                                                    |
-| begin_step  | yes      | 用于开始的名称(step_name)----(可以使用$表达式)                            |
-| end_step    | yes      | 用于接受的名称(step_name)----(可以使用$表达式)                            |
+| begin_step  | yes      | 用于开始的名称(step_name)----(可以使用$表达式)                                      |
+| end_step    | yes      | 用于接受的名称(step_name)----(可以使用$表达式)                                      |
 | steps       | yes      | A dictionary of steps that defines the intent of this workflow.(dict) |
 
 ## Step Model
