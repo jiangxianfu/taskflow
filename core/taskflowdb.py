@@ -78,7 +78,7 @@ class TaskFlowDB:
                 sql = """update task_schedule set status=%s where id=%s"""
                 cur.execute(1, sql, (status, sched_id))
 
-    def save_instance_status(self, instance_id, status, worker_hostname=None, worker_pid=None,
+    def save_instance_status(self, instance_id, status, worker_hostname=None,
                              result_message=None, result_json=None, retry_count=None):
         """
         保存实例信息状态
@@ -88,9 +88,6 @@ class TaskFlowDB:
         if worker_hostname:
             sql = sql + ",worker_hostname=%s"
             lst_params.append(worker_hostname)
-        if worker_pid:
-            sql = sql + ",worker_pid=%s"
-            lst_params.append(worker_pid)
         if result_message:
             sql = sql + ",result_message=%s"
             lst_params.append(result_message)

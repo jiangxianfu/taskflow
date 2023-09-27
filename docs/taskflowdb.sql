@@ -47,7 +47,6 @@ CREATE TABLE `task_instance` (
   `args_json` json NOT NULL COMMENT '表单参数',
   `status` varchar(15) NOT NULL COMMENT 'running----运行中,success----成功，failure----失败',
   `worker_hostname` varchar(20) COMMENT 'worker的机器名称',
-  `worker_pid` int COMMENT 'worker的进程号',
   `result_json` json COMMENT '执行的结果返回值',
   `result_message` varchar(5000) COMMENT '执行结果',
   `retry_count` int NOT NULL DEFAULT '0' COMMENT '重试次数',

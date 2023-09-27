@@ -9,14 +9,14 @@ description: 该方法主要是用于启动整个工作流程序
 """
 
 import time
-import subprocess
-from core.redisdb import RedisDB
-from core.taskflowdb import TaskFlowDB
-import socket
-from core import settings
 import logging
 import traceback
 import sys
+import os
+import socket
+from core import settings
+from core.redisdb import RedisDB
+from core.taskflowdb import TaskFlowDB
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -29,16 +29,10 @@ def message_process(instance_id):
         logging.debug("output_filename:%s", output_filename)
         logging.debug("task_run_filename:%s", task_run_file)
         logging.debug("task python bin location:%s", settings.PYTHONBIN)
-        with open(output_filename, "a") as outfile:
-            pm = subprocess.Popen([settings.PYTHONBIN, "-u", task_run_file, "-i", str(instance_id)],
-                                  close_fds=True,
-                                  cwd=settings.BASE_DIR,
-                                  stdout=outfile, stderr=subprocess.STDOUT)
-            taskflowdb = TaskFlowDB()
-            worker_hostname = socket.gethostname()
-            worker_pid = pm.pid
-            taskflowdb.save_instance_status(instance_id, 'running', worker_hostname=worker_hostname,
-                                            worker_pid=worker_pid)
+        os.system("nohup %s -u %s %s >%s 2>&1 &" % (settings.PYTHONBIN, task_run_file, instance_id, output_filename))
+        taskflowdb = TaskFlowDB()
+        worker_hostname = socket.gethostname()
+        taskflowdb.save_instance_status(instance_id, 'running', worker_hostname=worker_hostname)
     except:
         logging.error('message_process err \n %s', traceback.format_exc())
 
