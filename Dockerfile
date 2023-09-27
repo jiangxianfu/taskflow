@@ -15,6 +15,7 @@ RUN mkdir -p /taskflow /var/log/supervisor /var/log/taskflow
 WORKDIR /taskflow
 # install system packages
 RUN yum install -y python3 git telnet gcc\
+    python3-devel\
     && yum clean all
 # install pip packages
 COPY requirements.txt /tmp/
